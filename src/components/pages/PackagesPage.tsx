@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Star, MapPin, Calendar, Users } from 'lucide-react';
 
+
 const PackagesPage: React.FC = () => {
   const packages = [
     {
