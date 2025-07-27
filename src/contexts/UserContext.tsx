@@ -46,14 +46,45 @@ export function UserProvider({ children }: { children: ReactNode }) {
         id: authUser.id,
         name: displayName,
         email: authUser.email || '',
-        role: storedUserType,
+        role: storedUserType as 'customer' | 'driver' | 'admin',
         avatar: authUser.user_metadata?.avatar_url || '',
         isOnline: false,
       })
     } else {
-      setUser(null)
-      // Clear stored user type on logout
-      localStorage.removeItem('userType')
+      // Check if user is logged in via localStorage (for hardcoded logins)
+      const storedUserType = localStorage.getItem('userType')
+      if (storedUserType === 'admin') {
+        setUser({
+          id: 'admin-1',
+          name: 'Administrator',
+          email: 'admin@neoride.com',
+          role: 'admin',
+          avatar: '',
+          isOnline: true,
+        })
+      } else if (storedUserType === 'driver') {
+        setUser({
+          id: 'driver-1',
+          name: 'Test Driver',
+          email: 'driver@neoride.com',
+          role: 'driver',
+          avatar: '',
+          isOnline: false,
+        })
+      } else if (storedUserType === 'customer') {
+        setUser({
+          id: 'customer-1',
+          name: 'Test Customer',
+          email: 'customer@neoride.com',
+          role: 'customer',
+          avatar: '',
+          isOnline: false,
+        })
+      } else {
+        setUser(null)
+        // Clear stored user type on logout
+        localStorage.removeItem('userType')
+      }
     }
   }, [authUser])
 

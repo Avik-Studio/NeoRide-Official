@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Switch } from '@/components/ui/switch'
 import { useToast } from '@/hooks/use-toast'
+import { useAuth } from '@/hooks/useAuth'
+import { useUser } from '@/contexts/UserContext'
+import Navbar from '@/components/Navbar'
 import { 
   Car, 
   DollarSign, 
@@ -20,26 +24,53 @@ import {
   BarChart3,
   User,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  IndianRupee
 } from 'lucide-react'
 
 export default function DriverHome() {
   const [isOnline, setIsOnline] = useState(false)
   const [currentRide, setCurrentRide] = useState<any>(null)
-  const [earnings, setEarnings] = useState({ today: 125.50, week: 890.25, month: 3250.75 })
+  const [earnings, setEarnings] = useState({ today: 2850.50, week: 18450.25, month: 67250.75 })
   const { toast } = useToast()
+  const { user: authUser } = useAuth()
+  const { user: neoRideUser } = useUser()
+  const navigate = useNavigate()
+
+  // Check authentication and redirect if not logged in or not a driver
+  useEffect(() => {
+    const storedUserType = localStorage.getItem('userType')
+    
+    // If no auth user and no stored driver type, redirect to login
+    if (!authUser && storedUserType !== 'driver') {
+      navigate('/login')
+      return
+    }
+
+    // If we have a neoRideUser but they're not a driver, redirect to appropriate page
+    if (neoRideUser && neoRideUser.role !== 'driver') {
+      if (neoRideUser.role === 'admin') {
+        navigate('/admin')
+      } else if (neoRideUser.role === 'customer') {
+        navigate('/customer')
+      }
+      return
+    }
+
+    // If stored type is driver but no neoRideUser yet, that's okay - let it load
+  }, [authUser, neoRideUser, navigate])
 
   const todayStats = {
     rides: 12,
     hours: 8.5,
     rating: 4.8,
-    earnings: 125.50
+    earnings: 2850.50
   }
 
   const recentRides = [
-    { id: 1, passenger: 'Sarah Johnson', from: 'Downtown', to: 'Airport', fare: 25.50, rating: 5, time: '2:30 PM' },
-    { id: 2, passenger: 'Mike Chen', from: 'Mall', to: 'University', fare: 12.75, rating: 4, time: '1:45 PM' },
-    { id: 3, passenger: 'Emma Davis', from: 'Hospital', to: 'Home', fare: 18.25, rating: 5, time: '12:15 PM' },
+    { id: 1, passenger: 'Priya Sharma', from: 'Salt Lake City', to: 'Netaji Subhash Airport', fare: 350, rating: 5, time: '2:30 PM' },
+    { id: 2, passenger: 'Rajesh Kumar', from: 'South City Mall', to: 'Jadavpur University', fare: 180, rating: 4, time: '1:45 PM' },
+    { id: 3, passenger: 'Anita Das', from: 'SSKM Hospital', to: 'Park Street', fare: 120, rating: 5, time: '12:15 PM' },
   ]
 
   const handleToggleOnline = () => {
@@ -53,16 +84,16 @@ export default function DriverHome() {
   const simulateRideRequest = () => {
     if (isOnline && !currentRide) {
       setCurrentRide({
-        passenger: 'Alex Thompson',
-        pickup: '123 Main Street',
-        destination: '456 Oak Avenue',
-        fare: 15.75,
-        distance: '3.2 miles',
-        duration: '12 mins'
+        passenger: 'Arjun Banerjee',
+        pickup: 'New Market, Lindsay Street, Kolkata',
+        destination: 'Howrah Railway Station, Kolkata',
+        fare: 150,
+        distance: '5.2 km',
+        duration: '18 mins'
       })
       toast({
         title: 'New Ride Request!',
-        description: 'Alex Thompson wants a ride',
+        description: 'Arjun Banerjee wants a ride',
       })
     }
   }
@@ -78,13 +109,60 @@ export default function DriverHome() {
     }
   }, [isOnline, currentRide])
 
+  const handleLogout = async () => {
+    try {
+      // Clear localStorage
+      localStorage.removeItem('userType')
+      
+      // If there's a Supabase user, sign them out
+      if (authUser) {
+        const { supabase } = await import('@/lib/supabase')
+        await supabase.auth.signOut()
+      }
+      
+      toast({
+        title: 'Success',
+        description: 'Logged out successfully',
+      })
+      
+      navigate('/login')
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to logout',
+        variant: 'destructive',
+      })
+    }
+  }
+
+  // Show loading if still checking authentication
+  const storedUserType = localStorage.getItem('userType')
+  if (!authUser && storedUserType !== 'driver') {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-pulse text-lg">Loading...</div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-white">
+      {/* Navbar */}
+      {neoRideUser && (
+        <Navbar 
+          user={neoRideUser} 
+          onLogout={handleLogout} 
+          notificationCount={1}
+        />
+      )}
+      
       <div className="container mx-auto px-4 py-6 max-w-6xl">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Driver Dashboard</h1>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Driver Dashboard{neoRideUser?.name ? ` - ${neoRideUser.name}` : ''}
+            </h1>
             <p className="text-gray-600">Manage your rides and earnings</p>
           </div>
           <div className="flex items-center gap-4">
@@ -128,7 +206,7 @@ export default function DriverHome() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-2xl font-bold">${currentRide.fare}</div>
+                      <div className="text-2xl font-bold">₹{currentRide.fare}</div>
                     </div>
                   </div>
                   
@@ -208,8 +286,8 @@ export default function DriverHome() {
               </Card>
               <Card className="shadow-lg border-0">
                 <CardContent className="p-4 text-center">
-                  <DollarSign className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-gray-900">${todayStats.earnings}</div>
+                  <IndianRupee className="w-8 h-8 text-green-600 mx-auto mb-2" />
+                  <div className="text-2xl font-bold text-gray-900">₹{todayStats.earnings}</div>
                   <div className="text-sm text-gray-600">Today's Earnings</div>
                 </CardContent>
               </Card>
@@ -248,7 +326,7 @@ export default function DriverHome() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-semibold text-green-600">${ride.fare}</div>
+                      <div className="font-semibold text-green-600">₹{ride.fare}</div>
                     </div>
                   </div>
                 ))}
@@ -269,15 +347,15 @@ export default function DriverHome() {
               <CardContent className="space-y-4">
                 <div>
                   <div className="text-sm opacity-90">Today</div>
-                  <div className="text-2xl font-bold">${earnings.today}</div>
+                  <div className="text-2xl font-bold">₹{earnings.today}</div>
                 </div>
                 <div>
                   <div className="text-sm opacity-90">This Week</div>
-                  <div className="text-xl font-semibold">${earnings.week}</div>
+                  <div className="text-xl font-semibold">₹{earnings.week}</div>
                 </div>
                 <div>
                   <div className="text-sm opacity-90">This Month</div>
-                  <div className="text-xl font-semibold">${earnings.month}</div>
+                  <div className="text-xl font-semibold">₹{earnings.month}</div>
                 </div>
                 <Button variant="secondary" size="sm" className="w-full">
                   <BarChart3 className="w-4 h-4 mr-2" />
@@ -304,7 +382,7 @@ export default function DriverHome() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">Next Service</span>
-                  <span className="font-medium">2,500 miles</span>
+                  <span className="font-medium">4,000 km</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">Insurance</span>

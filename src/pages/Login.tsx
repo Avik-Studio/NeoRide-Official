@@ -49,7 +49,8 @@ export default function Login() {
         })
         // Store admin role for UserContext integration
         localStorage.setItem('userType', 'admin')
-        navigate('/')
+        // Redirect directly to admin panel
+        navigate('/admin')
         setLoading(false)
         return
       } else {
@@ -74,26 +75,54 @@ export default function Login() {
     }
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
       if (error) {
-        toast({
-          title: 'Error',
-          description: error.message,
-          variant: 'destructive',
-        })
-      } else {
-        // Store user type for UserContext integration
-        localStorage.setItem('userType', role)
-        
-        toast({
-          title: 'Success',
-          description: `Welcome ${role}!`,
-        })
-        navigate('/')
+        // Handle specific error cases
+        if (error.message.includes('Email not confirmed')) {
+          toast({
+            title: 'Email Not Verified 📧',
+            description: 'Please check your email and click the verification link before logging in. Check your spam folder if needed.',
+            variant: 'destructive',
+          })
+        } else {
+          toast({
+            title: 'Login Error',
+            description: error.message,
+            variant: 'destructive',
+          })
+        }
+      } else if (data.user) {
+        // Check if email is confirmed
+        if (!data.user.email_confirmed_at) {
+          toast({
+            title: 'Email Not Verified 📧',
+            description: 'Please verify your email address before logging in. Check your inbox for the verification link.',
+            variant: 'destructive',
+          })
+          // Sign out the user since they're not verified
+          await supabase.auth.signOut()
+        } else {
+          // Store user type for UserContext integration
+          localStorage.setItem('userType', role)
+          
+          toast({
+            title: 'Welcome Back! 👋',
+            description: `Successfully logged in as ${role}`,
+          })
+          
+          // Redirect to appropriate dashboard based on role
+          if (role === 'customer') {
+            navigate('/customer')
+          } else if (role === 'driver') {
+            navigate('/driver')
+          } else {
+            navigate('/')
+          }
+        }
       }
     } catch (error) {
       toast({

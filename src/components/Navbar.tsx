@@ -11,6 +11,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Link } from 'react-router-dom'
+import ProfileModal from './ProfileModal'
+import SettingsModal from './SettingsModal'
 
 interface User {
   id: string
@@ -25,10 +27,31 @@ interface NavbarProps {
   user: User | null
   onLogout: () => void
   notificationCount?: number
+  onUpdateUser?: (updatedUser: User) => void
 }
 
-export default function Navbar({ user, onLogout }: NavbarProps) {
+export default function Navbar({ user, onLogout, onUpdateUser }: NavbarProps) {
+  const [showProfileModal, setShowProfileModal] = useState(false)
+  const [showSettingsModal, setShowSettingsModal] = useState(false)
+
   if (!user) return null
+
+  const handleUpdateUser = (updatedUser: User) => {
+    if (onUpdateUser) {
+      onUpdateUser(updatedUser)
+    }
+  }
+
+  // Enhanced user data for modals
+  const enhancedUser = {
+    ...user,
+    phone: '+91 98765 43210',
+    address: 'Flat 4B, Block A, Salt Lake City, Sector V, Kolkata - 700091',
+    joinDate: 'January 2024',
+    isVerified: true,
+    emailVerified: true,
+    phoneVerified: false
+  }
 
   return (
     <nav className="w-full border-b bg-white shadow-sm sticky top-0 z-50">
@@ -95,11 +118,17 @@ export default function Navbar({ user, onLogout }: NavbarProps) {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem 
+                  className="cursor-pointer"
+                  onClick={() => setShowProfileModal(true)}
+                >
                   <User className="mr-3 h-4 w-4" />
                   <span>Profile Settings</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem 
+                  className="cursor-pointer"
+                  onClick={() => setShowSettingsModal(true)}
+                >
                   <Settings className="mr-3 h-4 w-4" />
                   <span>Account Settings</span>
                 </DropdownMenuItem>
@@ -116,6 +145,20 @@ export default function Navbar({ user, onLogout }: NavbarProps) {
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <ProfileModal
+        isOpen={showProfileModal}
+        onClose={() => setShowProfileModal(false)}
+        user={enhancedUser}
+      />
+      
+      <SettingsModal
+        isOpen={showSettingsModal}
+        onClose={() => setShowSettingsModal(false)}
+        user={enhancedUser}
+        onUpdateUser={handleUpdateUser}
+      />
     </nav>
   )
 }

@@ -74,10 +74,11 @@ export default function Signup() {
     }
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data: authData, error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: {
             full_name: data.name,
             phone: data.phone,
@@ -91,9 +92,11 @@ export default function Signup() {
         },
       })
 
+      console.log('Signup response:', { authData, error }) // Debug log
+
       if (error) {
         toast({
-          title: 'Error',
+          title: 'Signup Error',
           description: error.message,
           variant: 'destructive',
         })
@@ -101,10 +104,17 @@ export default function Signup() {
         // Store user type for when they verify and login
         localStorage.setItem('pendingUserType', role)
         
-        toast({
-          title: 'Success',
-          description: `${role} account created! Please check your email to verify your account.`,
-        })
+        if (authData.user && !authData.user.email_confirmed_at) {
+          toast({
+            title: 'Check Your Email! 📧',
+            description: `We've sent a confirmation email to ${data.email}. Please click the link in the email to verify your account. Check your spam folder if you don't see it.`,
+          })
+        } else {
+          toast({
+            title: 'Account Created! ✅',
+            description: `${role} account created successfully!`,
+          })
+        }
         navigate('/login')
       }
     } catch (error) {

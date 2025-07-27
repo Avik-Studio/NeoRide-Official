@@ -16,7 +16,11 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     )
   }
 
-  if (!user) {
+  // Check for stored user types (for hardcoded logins)
+  const storedUserType = localStorage.getItem('userType')
+  const isLoggedIn = storedUserType === 'admin' || storedUserType === 'driver' || storedUserType === 'customer'
+
+  if (!user && !isLoggedIn) {
     return <Navigate to="/login" replace />
   }
 

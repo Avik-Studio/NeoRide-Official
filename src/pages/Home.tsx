@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/hooks/use-toast'
 import { useAuth } from '@/hooks/useAuth'
 import { supabase } from '@/lib/supabase'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { 
   Car, 
   MapPin, 
@@ -28,6 +30,18 @@ function HomeContent() {
   const { user: authUser } = useAuth()
   const { user: neoRideUser, updateUserRole } = useUser()
   const { toast } = useToast()
+  const navigate = useNavigate()
+
+  // Redirect admin users to admin panel
+  useEffect(() => {
+    if (neoRideUser?.role === 'admin') {
+      navigate('/admin')
+    } else if (neoRideUser?.role === 'driver') {
+      navigate('/driver')
+    } else if (neoRideUser?.role === 'customer') {
+      navigate('/customer')
+    }
+  }, [neoRideUser?.role, navigate])
 
   const handleLogout = async () => {
     try {
