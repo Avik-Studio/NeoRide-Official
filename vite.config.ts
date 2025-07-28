@@ -28,18 +28,15 @@ export default defineConfig(({ mode }) => ({
         manualChunks: {
           // Vendor chunk for React and core libraries
           vendor: ['react', 'react-dom', 'react-router-dom'],
-          // UI components chunk
+          // UI components chunk - only include packages that exist in dependencies
           ui: [
             '@radix-ui/react-dialog',
             '@radix-ui/react-dropdown-menu',
             '@radix-ui/react-avatar',
-            '@radix-ui/react-button',
-            '@radix-ui/react-card',
             '@radix-ui/react-toast',
             '@radix-ui/react-tabs',
             '@radix-ui/react-select',
             '@radix-ui/react-label',
-            '@radix-ui/react-input',
             '@radix-ui/react-checkbox',
             '@radix-ui/react-switch',
             '@radix-ui/react-slider',
