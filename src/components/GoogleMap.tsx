@@ -17,12 +17,12 @@ export default function GoogleMap({ pickup, destination, onLocationSelect, class
 
   useEffect(() => {
     const initMap = async () => {
-      const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'YOUR_GOOGLE_MAPS_API_KEY'
+      const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyBijSpKeKls2NnnAV-S9BRIay897AIBGyg'
       
       console.log('Google Maps API Key:', apiKey ? 'Present' : 'Missing')
       console.log('Environment variables:', import.meta.env)
       
-      if (!apiKey || apiKey === 'YOUR_GOOGLE_MAPS_API_KEY') {
+      if (!apiKey || apiKey === 'AIzaSyBijSpKeKls2NnnAV-S9BRIay897AIBGyg') {
         console.warn('Google Maps API key not configured. Please set VITE_GOOGLE_MAPS_API_KEY in your .env file')
         setIsLoaded(true)
         return
