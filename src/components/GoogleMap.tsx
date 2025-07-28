@@ -22,7 +22,7 @@ export default function GoogleMap({ pickup, destination, onLocationSelect, class
       console.log('Google Maps API Key:', apiKey ? 'Present' : 'Missing')
       console.log('Environment variables:', import.meta.env)
       
-      if (!apiKey || apiKey === 'AIzaSyBijSpKeKls2NnnAV-S9BRIay897AIBGyg') {
+      if (!apiKey) {
         console.warn('Google Maps API key not configured. Please set VITE_GOOGLE_MAPS_API_KEY in your .env file')
         setIsLoaded(true)
         return
