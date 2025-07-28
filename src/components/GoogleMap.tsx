@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Loader } from '@googlemaps/js-api-loader'
+import { googleMapsService } from '../services/googleMapsService'
 
 interface GoogleMapProps {
   pickup?: string
@@ -64,6 +65,15 @@ export default function GoogleMap({ pickup, destination, onLocationSelect, class
           setMap(mapInstance)
           setDirectionsService(directionsServiceInstance)
           setDirectionsRenderer(directionsRendererInstance)
+          
+          // Initialize Google Maps Service for route calculations
+          try {
+            await googleMapsService.initialize()
+            console.log('Google Maps Service initialized successfully')
+          } catch (error) {
+            console.error('Failed to initialize Google Maps Service:', error)
+          }
+          
           setIsLoaded(true)
 
           // Add click listener for location selection

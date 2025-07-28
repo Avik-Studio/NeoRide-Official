@@ -19,6 +19,7 @@ import {
   getSurgeMultiplier,
   getTrafficCondition
 } from '@/utils/routeCalculator'
+import { RoutePreview } from '@/components/RoutePreview'
 import { 
   MapPin, 
   Clock, 
@@ -284,100 +285,18 @@ export default function CustomerHome() {
                 </Card>
               )}
 
-              {/* Enhanced Route Info */}
-              {pickupLocation && dropLocation && (
-                <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Navigation className="w-5 h-5 text-blue-600" />
-                    <span className="font-semibold text-gray-900">Route Preview</span>
-                  </div>
-                  
-                  {/* Route Path */}
-                  <div className="space-y-3 mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
-                      <div className="flex-1">
-                        <div className="text-sm font-medium text-gray-900">Pickup Location</div>
-                        <div className="text-sm text-gray-600">{pickupLocation}</div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-3 ml-1.5">
-                      <div className="w-px h-6 bg-gray-300"></div>
-                    </div>
-                    
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 bg-red-500 rounded-full border-2 border-white shadow-sm"></div>
-                      <div className="flex-1">
-                        <div className="text-sm font-medium text-gray-900">Drop Location</div>
-                        <div className="text-sm text-gray-600">{dropLocation}</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Route Details */}
-                  <div className="grid grid-cols-3 gap-4 pt-3 border-t border-blue-200">
-                    <div className="text-center">
-                      <div className="flex items-center justify-center gap-1 mb-1">
-                        <Clock className="w-4 h-4 text-blue-600" />
-                        <span className="text-xs font-medium text-gray-700">Time</span>
-                      </div>
-                      <div className="text-sm font-bold text-gray-900">
-                        {calculateEstimatedTime(pickupLocation, dropLocation)}
-                      </div>
-                    </div>
-                    
-                    <div className="text-center">
-                      <div className="flex items-center justify-center gap-1 mb-1">
-                        <MapPin className="w-4 h-4 text-blue-600" />
-                        <span className="text-xs font-medium text-gray-700">Distance</span>
-                      </div>
-                      <div className="text-sm font-bold text-gray-900">
-                        {calculateDistance(pickupLocation, dropLocation)}
-                      </div>
-                    </div>
-                    
-                    <div className="text-center">
-                      <div className="flex items-center justify-center gap-1 mb-1">
-                        <IndianRupee className="w-4 h-4 text-green-600" />
-                        <span className="text-xs font-medium text-gray-700">Est. Cost</span>
-                      </div>
-                      <div className="text-sm font-bold text-green-600">
-                        ₹{calculateEstimatedCost(pickupLocation, dropLocation)}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Additional Route Info */}
-                  <div className="mt-3 pt-3 border-t border-blue-200 space-y-2">
-                    {/* Traffic and Surge Info */}
-                    <div className="flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-1 text-gray-600">
-                        <Car className="w-3 h-3" />
-                        <span>{getTrafficCondition(pickupLocation, dropLocation)}</span>
-                      </div>
-                      {isSurgeActive() && (
-                        <div className="flex items-center gap-1 text-orange-600">
-                          <TrendingUp className="w-3 h-3" />
-                          <span>{getSurgeMultiplier()}x Surge</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    {/* Pricing Info */}
-                    <div className="flex items-center justify-between text-xs text-gray-600">
-                      <div className="flex items-center gap-1">
-                        <Fuel className="w-3 h-3" />
-                        <span>Petrol: ₹{getCurrentPetrolPrice()}/L</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <IndianRupee className="w-3 h-3" />
-                        <span>₹50 base + ₹{getPerKmRate()}/km</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
+              {/* Enhanced Route Preview with Real-time Pricing */}
+              <RoutePreview 
+                pickupLocation={pickupLocation}
+                dropLocation={dropLocation}
+                onBookRide={() => {
+                  toast({
+                    title: "Booking Ride",
+                    description: "Searching for nearby drivers...",
+                  });
+                  setIsSearching(true);
+                }}
+              />
             </CardContent>
           </Card>
 
