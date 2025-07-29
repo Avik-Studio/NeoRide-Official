@@ -113,26 +113,56 @@ export default function Navbar({ user, onLogout, onUpdateUser }: NavbarProps) {
                   </div>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-64" align="end" forceMount>
+              <DropdownMenuContent 
+                className={`w-64 transition-all duration-300 ${
+                  isDark 
+                    ? 'bg-slate-800/95 backdrop-blur-xl border-cyan-500/20 shadow-2xl shadow-cyan-500/10' 
+                    : 'bg-white border-gray-200 shadow-lg'
+                }`} 
+                align="end" 
+                forceMount
+                style={{
+                  background: isDark 
+                    ? 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%)'
+                    : undefined,
+                  border: isDark 
+                    ? '1px solid rgba(0, 198, 255, 0.2)'
+                    : undefined
+                }}
+              >
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-2 p-2">
                     <div className="flex items-center space-x-3">
                       <Avatar className="h-12 w-12">
                         <AvatarImage src={user.avatar} alt={user.name} />
-                        <AvatarFallback className="bg-blue-600 text-white font-medium">
+                        <AvatarFallback className={`font-medium transition-colors ${
+                          isDark 
+                            ? 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white' 
+                            : 'bg-blue-600 text-white'
+                        }`}>
                           {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col">
-                        <p className="text-sm font-semibold text-gray-900">{user.name}</p>
-                        <p className="text-xs text-gray-500">{user.email}</p>
+                        <p className={`text-sm font-semibold transition-colors ${
+                          isDark ? 'text-white' : 'text-gray-900'
+                        }`}>{user.name}</p>
+                        <p className={`text-xs transition-colors ${
+                          isDark ? 'text-gray-300' : 'text-gray-500'
+                        }`}>{user.email}</p>
                         <div className="mt-1">
-                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium transition-colors ${
                             user.role === 'admin' 
-                              ? 'bg-purple-100 text-purple-800'
+                              ? isDark 
+                                ? 'bg-purple-600/20 text-purple-300 border border-purple-500/30' 
+                                : 'bg-purple-100 text-purple-800'
                               : user.role === 'driver'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-blue-100 text-blue-800'
+                              ? isDark 
+                                ? 'bg-green-600/20 text-green-300 border border-green-500/30' 
+                                : 'bg-green-100 text-green-800'
+                              : isDark 
+                                ? 'bg-blue-600/20 text-blue-300 border border-blue-500/30' 
+                                : 'bg-blue-100 text-blue-800'
                           }`}>
                             {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
                           </span>
@@ -141,25 +171,41 @@ export default function Navbar({ user, onLogout, onUpdateUser }: NavbarProps) {
                     </div>
                   </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className={`transition-colors ${
+                  isDark ? 'bg-slate-600' : 'bg-gray-200'
+                }`} />
                 <DropdownMenuItem 
-                  className="cursor-pointer"
+                  className={`cursor-pointer transition-all duration-200 ${
+                    isDark 
+                      ? 'text-gray-300 hover:bg-slate-700 hover:text-white focus:bg-slate-700 focus:text-white' 
+                      : 'text-gray-700 hover:bg-gray-50 focus:bg-gray-50'
+                  }`}
                   onClick={() => setShowProfileModal(true)}
                 >
                   <User className="mr-3 h-4 w-4" />
                   <span>Profile Settings</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem 
-                  className="cursor-pointer"
+                  className={`cursor-pointer transition-all duration-200 ${
+                    isDark 
+                      ? 'text-gray-300 hover:bg-slate-700 hover:text-white focus:bg-slate-700 focus:text-white' 
+                      : 'text-gray-700 hover:bg-gray-50 focus:bg-gray-50'
+                  }`}
                   onClick={() => setShowSettingsModal(true)}
                 >
                   <Settings className="mr-3 h-4 w-4" />
                   <span>Account Settings</span>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className={`transition-colors ${
+                  isDark ? 'bg-slate-600' : 'bg-gray-200'
+                }`} />
                 <DropdownMenuItem 
                   onClick={onLogout} 
-                  className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+                  className={`cursor-pointer transition-all duration-200 ${
+                    isDark 
+                      ? 'text-red-400 hover:bg-red-900/20 hover:text-red-300 focus:bg-red-900/20 focus:text-red-300' 
+                      : 'text-red-600 hover:bg-red-50 focus:bg-red-50 focus:text-red-600'
+                  }`}
                 >
                   <LogOut className="mr-3 h-4 w-4" />
                   <span>Sign Out</span>

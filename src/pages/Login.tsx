@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Checkbox } from '@/components/ui/checkbox'
 import { useToast } from '@/hooks/use-toast'
 import { supabase } from '@/lib/supabase'
-import { Car, User, Shield } from 'lucide-react'
+import { Car, User, Shield, Eye, EyeOff } from 'lucide-react'
 
 export default function Login() {
   const [customerEmail, setCustomerEmail] = useState('')
@@ -20,6 +20,9 @@ export default function Login() {
   const [driverAgree, setDriverAgree] = useState(false)
   const [loading, setLoading] = useState(false)
   const [activeTab, setActiveTab] = useState('customer')
+  const [showCustomerPassword, setShowCustomerPassword] = useState(false)
+  const [showDriverPassword, setShowDriverPassword] = useState(false)
+  const [showAdminPassword, setShowAdminPassword] = useState(false)
   const { toast } = useToast()
   const navigate = useNavigate()
 
@@ -197,13 +200,26 @@ export default function Login() {
                   onChange={(e) => setCustomerEmail(e.target.value)}
                   className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
                 />
-                <Input
-                  type="password"
-                  placeholder="Password"
-                  value={customerPassword}
-                  onChange={(e) => setCustomerPassword(e.target.value)}
-                  className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
-                />
+                <div className="relative">
+                  <Input
+                    type={showCustomerPassword ? "text" : "password"}
+                    placeholder="Password"
+                    value={customerPassword}
+                    onChange={(e) => setCustomerPassword(e.target.value)}
+                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCustomerPassword(!showCustomerPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    {showCustomerPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox 
                     id="customer-terms" 
@@ -236,13 +252,26 @@ export default function Login() {
                   onChange={(e) => setDriverEmail(e.target.value)}
                   className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
                 />
-                <Input
-                  type="password"
-                  placeholder="Password"
-                  value={driverPassword}
-                  onChange={(e) => setDriverPassword(e.target.value)}
-                  className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
-                />
+                <div className="relative">
+                  <Input
+                    type={showDriverPassword ? "text" : "password"}
+                    placeholder="Password"
+                    value={driverPassword}
+                    onChange={(e) => setDriverPassword(e.target.value)}
+                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowDriverPassword(!showDriverPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    {showDriverPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox 
                     id="driver-terms" 
@@ -275,13 +304,26 @@ export default function Login() {
                   onChange={(e) => setAdminEmail(e.target.value)}
                   className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
                 />
-                <Input
-                  type="password"
-                  placeholder="Admin Password"
-                  value={adminPassword}
-                  onChange={(e) => setAdminPassword(e.target.value)}
-                  className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
-                />
+                <div className="relative">
+                  <Input
+                    type={showAdminPassword ? "text" : "password"}
+                    placeholder="Admin Password"
+                    value={adminPassword}
+                    onChange={(e) => setAdminPassword(e.target.value)}
+                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowAdminPassword(!showAdminPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    {showAdminPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
                 <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded-lg">
                   <p><strong>Admin Credentials:</strong></p>
                   <p>Email: Admin@example.com</p>

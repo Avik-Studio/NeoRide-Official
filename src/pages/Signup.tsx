@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Checkbox } from '@/components/ui/checkbox'
 import { useToast } from '@/hooks/use-toast'
 import { supabase } from '@/lib/supabase'
-import { Car, User } from 'lucide-react'
+import { Car, User, Eye, EyeOff } from 'lucide-react'
 
 export default function Signup() {
   const [customerData, setCustomerData] = useState({
@@ -35,6 +35,10 @@ export default function Signup() {
 
   const [loading, setLoading] = useState(false)
   const [activeTab, setActiveTab] = useState('customer')
+  const [showCustomerPassword, setShowCustomerPassword] = useState(false)
+  const [showCustomerConfirmPassword, setShowCustomerConfirmPassword] = useState(false)
+  const [showDriverPassword, setShowDriverPassword] = useState(false)
+  const [showDriverConfirmPassword, setShowDriverConfirmPassword] = useState(false)
   const { toast } = useToast()
   const navigate = useNavigate()
 
@@ -199,20 +203,46 @@ export default function Signup() {
                   onChange={(e) => setCustomerData({...customerData, phone: e.target.value})}
                   className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
                 />
-                <Input
-                  type="password"
-                  placeholder="Password"
-                  value={customerData.password}
-                  onChange={(e) => setCustomerData({...customerData, password: e.target.value})}
-                  className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
-                />
-                <Input
-                  type="password"
-                  placeholder="Confirm Password"
-                  value={customerData.confirmPassword}
-                  onChange={(e) => setCustomerData({...customerData, confirmPassword: e.target.value})}
-                  className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
-                />
+                <div className="relative">
+                  <Input
+                    type={showCustomerPassword ? "text" : "password"}
+                    placeholder="Password"
+                    value={customerData.password}
+                    onChange={(e) => setCustomerData({...customerData, password: e.target.value})}
+                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCustomerPassword(!showCustomerPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    {showCustomerPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+                <div className="relative">
+                  <Input
+                    type={showCustomerConfirmPassword ? "text" : "password"}
+                    placeholder="Confirm Password"
+                    value={customerData.confirmPassword}
+                    onChange={(e) => setCustomerData({...customerData, confirmPassword: e.target.value})}
+                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCustomerConfirmPassword(!showCustomerConfirmPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    {showCustomerConfirmPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox 
                     id="customer-signup-terms" 
@@ -283,20 +313,46 @@ export default function Signup() {
                   onChange={(e) => setDriverData({...driverData, vehiclePlate: e.target.value})}
                   className="h-12 border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg"
                 />
-                <Input
-                  type="password"
-                  placeholder="Password"
-                  value={driverData.password}
-                  onChange={(e) => setDriverData({...driverData, password: e.target.value})}
-                  className="h-12 border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg"
-                />
-                <Input
-                  type="password"
-                  placeholder="Confirm Password"
-                  value={driverData.confirmPassword}
-                  onChange={(e) => setDriverData({...driverData, confirmPassword: e.target.value})}
-                  className="h-12 border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg"
-                />
+                <div className="relative">
+                  <Input
+                    type={showDriverPassword ? "text" : "password"}
+                    placeholder="Password"
+                    value={driverData.password}
+                    onChange={(e) => setDriverData({...driverData, password: e.target.value})}
+                    className="h-12 border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowDriverPassword(!showDriverPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    {showDriverPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+                <div className="relative">
+                  <Input
+                    type={showDriverConfirmPassword ? "text" : "password"}
+                    placeholder="Confirm Password"
+                    value={driverData.confirmPassword}
+                    onChange={(e) => setDriverData({...driverData, confirmPassword: e.target.value})}
+                    className="h-12 border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg pr-12"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowDriverConfirmPassword(!showDriverConfirmPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    {showDriverConfirmPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox 
                     id="driver-signup-terms" 

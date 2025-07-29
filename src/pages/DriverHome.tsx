@@ -7,6 +7,7 @@ import { Switch } from '@/components/ui/switch'
 import { useToast } from '@/hooks/use-toast'
 import { useAuth } from '@/hooks/useAuth'
 import { useUser } from '@/contexts/UserContext'
+import { useTheme } from '@/contexts/ThemeContext'
 import Navbar from '@/components/Navbar'
 import { 
   Car, 
@@ -35,6 +36,7 @@ export default function DriverHome() {
   const { toast } = useToast()
   const { user: authUser } = useAuth()
   const { user: neoRideUser } = useUser()
+  const { isDark } = useTheme()
   const navigate = useNavigate()
 
   // Check authentication and redirect if not logged in or not a driver
@@ -146,7 +148,15 @@ export default function DriverHome() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-white">
+    <div className={`min-h-screen transition-all duration-500 ${
+      isDark 
+        ? 'bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800' 
+        : 'bg-gradient-to-br from-green-50 to-white'
+    }`} style={{
+      background: isDark 
+        ? 'linear-gradient(135deg, #0B1B3A 0%, #101E4B 30%, #1a2332 70%, #0f1419 100%)'
+        : undefined
+    }}>
       {/* Navbar */}
       {neoRideUser && (
         <Navbar 
@@ -160,14 +170,22 @@ export default function DriverHome() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className={`text-3xl font-bold transition-colors duration-300 ${
+              isDark 
+                ? 'bg-gradient-to-r from-white to-cyan-200 bg-clip-text text-transparent' 
+                : 'text-gray-900'
+            }`}>
               Driver Dashboard{neoRideUser?.name ? ` - ${neoRideUser.name}` : ''}
             </h1>
-            <p className="text-gray-600">Manage your rides and earnings</p>
+            <p className={`transition-colors duration-300 ${
+              isDark ? 'text-gray-300' : 'text-gray-600'
+            }`}>Manage your rides and earnings</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
-              <span className="text-sm font-medium">
+              <span className={`text-sm font-medium transition-colors ${
+                isDark ? 'text-white' : 'text-gray-900'
+              }`}>
                 {isOnline ? 'Online' : 'Offline'}
               </span>
               <Switch
@@ -176,7 +194,16 @@ export default function DriverHome() {
                 className="data-[state=checked]:bg-green-500"
               />
             </div>
-            <Badge variant={isOnline ? "default" : "secondary"} className={isOnline ? "bg-green-500" : ""}>
+            <Badge 
+              variant={isOnline ? "default" : "secondary"} 
+              className={`transition-all duration-300 ${
+                isOnline 
+                  ? 'bg-green-500 text-white shadow-lg shadow-green-500/30' 
+                  : isDark 
+                    ? 'bg-slate-700 text-gray-300 border-slate-600' 
+                    : 'bg-gray-200 text-gray-700'
+              }`}
+            >
               {isOnline ? 'Available' : 'Offline'}
             </Badge>
           </div>
@@ -242,19 +269,40 @@ export default function DriverHome() {
                 </CardContent>
               </Card>
             ) : (
-              <Card className="shadow-lg border-0">
+              <Card className={`shadow-2xl border-0 transition-all duration-500 ${
+                isDark 
+                  ? 'bg-gradient-to-br from-slate-800/95 to-slate-900/95 backdrop-blur-xl border border-cyan-500/20 shadow-cyan-500/10' 
+                  : 'bg-white shadow-blue-100/50'
+              }`} style={{
+                background: isDark 
+                  ? 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%)'
+                  : undefined,
+                boxShadow: isDark 
+                  ? '0 25px 50px -12px rgba(0, 198, 255, 0.15), 0 0 0 1px rgba(0, 198, 255, 0.1)'
+                  : undefined
+              }}>
                 <CardContent className="p-8 text-center">
                   {isOnline ? (
                     <div>
-                      <Car className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Ready for Rides</h3>
-                      <p className="text-gray-600">You're online and available for ride requests</p>
+                      <Car className="w-16 h-16 text-green-500 mx-auto mb-4 drop-shadow-lg" />
+                      <h3 className={`text-xl font-semibold mb-2 transition-colors ${
+                        isDark ? 'text-white' : 'text-gray-900'
+                      }`}>Ready for Rides</h3>
+                      <p className={`transition-colors ${
+                        isDark ? 'text-gray-300' : 'text-gray-600'
+                      }`}>You're online and available for ride requests</p>
                     </div>
                   ) : (
                     <div>
-                      <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">You're Offline</h3>
-                      <p className="text-gray-600">Turn on availability to start receiving ride requests</p>
+                      <AlertCircle className={`w-16 h-16 mx-auto mb-4 transition-colors ${
+                        isDark ? 'text-gray-500' : 'text-gray-400'
+                      }`} />
+                      <h3 className={`text-xl font-semibold mb-2 transition-colors ${
+                        isDark ? 'text-white' : 'text-gray-900'
+                      }`}>You're Offline</h3>
+                      <p className={`transition-colors ${
+                        isDark ? 'text-gray-300' : 'text-gray-600'
+                      }`}>Turn on availability to start receiving ride requests</p>
                     </div>
                   )}
                 </CardContent>
@@ -263,60 +311,123 @@ export default function DriverHome() {
 
             {/* Today's Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Card className="shadow-lg border-0">
+              <Card className={`shadow-xl border-0 transition-all duration-300 ${
+                isDark 
+                  ? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl border border-cyan-500/20' 
+                  : 'bg-white'
+              }`}>
                 <CardContent className="p-4 text-center">
-                  <Car className="w-8 h-8 text-blue-500 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-gray-900">{todayStats.rides}</div>
-                  <div className="text-sm text-gray-600">Rides Today</div>
+                  <Car className={`w-8 h-8 mx-auto mb-2 transition-colors ${
+                    isDark ? 'text-cyan-400' : 'text-blue-500'
+                  }`} />
+                  <div className={`text-2xl font-bold transition-colors ${
+                    isDark ? 'text-white' : 'text-gray-900'
+                  }`}>{todayStats.rides}</div>
+                  <div className={`text-sm transition-colors ${
+                    isDark ? 'text-gray-300' : 'text-gray-600'
+                  }`}>Rides Today</div>
                 </CardContent>
               </Card>
-              <Card className="shadow-lg border-0">
+              <Card className={`shadow-xl border-0 transition-all duration-300 ${
+                isDark 
+                  ? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl border border-cyan-500/20' 
+                  : 'bg-white'
+              }`}>
                 <CardContent className="p-4 text-center">
                   <Clock className="w-8 h-8 text-green-500 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-gray-900">{todayStats.hours}h</div>
-                  <div className="text-sm text-gray-600">Hours Online</div>
+                  <div className={`text-2xl font-bold transition-colors ${
+                    isDark ? 'text-white' : 'text-gray-900'
+                  }`}>{todayStats.hours}h</div>
+                  <div className={`text-sm transition-colors ${
+                    isDark ? 'text-gray-300' : 'text-gray-600'
+                  }`}>Hours Online</div>
                 </CardContent>
               </Card>
-              <Card className="shadow-lg border-0">
+              <Card className={`shadow-xl border-0 transition-all duration-300 ${
+                isDark 
+                  ? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl border border-cyan-500/20' 
+                  : 'bg-white'
+              }`}>
                 <CardContent className="p-4 text-center">
                   <Star className="w-8 h-8 text-yellow-500 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-gray-900">{todayStats.rating}</div>
-                  <div className="text-sm text-gray-600">Rating</div>
+                  <div className={`text-2xl font-bold transition-colors ${
+                    isDark ? 'text-white' : 'text-gray-900'
+                  }`}>{todayStats.rating}</div>
+                  <div className={`text-sm transition-colors ${
+                    isDark ? 'text-gray-300' : 'text-gray-600'
+                  }`}>Rating</div>
                 </CardContent>
               </Card>
-              <Card className="shadow-lg border-0">
+              <Card className={`shadow-xl border-0 transition-all duration-300 ${
+                isDark 
+                  ? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl border border-cyan-500/20' 
+                  : 'bg-white'
+              }`}>
                 <CardContent className="p-4 text-center">
                   <IndianRupee className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                  <div className="text-2xl font-bold text-gray-900">₹{todayStats.earnings}</div>
-                  <div className="text-sm text-gray-600">Today's Earnings</div>
+                  <div className={`text-2xl font-bold transition-colors ${
+                    isDark ? 'text-white' : 'text-gray-900'
+                  }`}>₹{todayStats.earnings}</div>
+                  <div className={`text-sm transition-colors ${
+                    isDark ? 'text-gray-300' : 'text-gray-600'
+                  }`}>Today's Earnings</div>
                 </CardContent>
               </Card>
             </div>
 
             {/* Recent Rides */}
-            <Card className="shadow-lg border-0">
+            <Card className={`shadow-2xl border-0 transition-all duration-500 ${
+              isDark 
+                ? 'bg-gradient-to-br from-slate-800/95 to-slate-900/95 backdrop-blur-xl border border-cyan-500/20 shadow-cyan-500/10' 
+                : 'bg-white shadow-blue-100/50'
+            }`} style={{
+              background: isDark 
+                ? 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%)'
+                : undefined,
+              boxShadow: isDark 
+                ? '0 25px 50px -12px rgba(0, 198, 255, 0.15), 0 0 0 1px rgba(0, 198, 255, 0.1)'
+                : undefined
+            }}>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Clock className="w-5 h-5" />
+                <CardTitle className={`flex items-center gap-2 transition-colors ${
+                  isDark ? 'text-white' : 'text-gray-900'
+                }`}>
+                  <Clock className={`w-5 h-5 transition-colors ${
+                    isDark ? 'text-cyan-400' : 'text-blue-600'
+                  }`} />
                   Recent Rides
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {recentRides.map((ride) => (
-                  <div key={ride.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                  <div key={ride.id} className={`flex items-center justify-between p-4 rounded-lg transition-all duration-300 ${
+                    isDark 
+                      ? 'bg-slate-700/50 border border-slate-600/50' 
+                      : 'bg-gray-50'
+                  }`}>
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                        isDark 
+                          ? 'bg-gradient-to-br from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/30' 
+                          : 'bg-blue-500'
+                      }`}>
                         <User className="w-5 h-5 text-white" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-gray-900">{ride.passenger}</h4>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <h4 className={`font-semibold transition-colors ${
+                          isDark ? 'text-white' : 'text-gray-900'
+                        }`}>{ride.passenger}</h4>
+                        <div className={`flex items-center gap-2 text-sm transition-colors ${
+                          isDark ? 'text-gray-300' : 'text-gray-600'
+                        }`}>
                           <span>{ride.from}</span>
                           <span>→</span>
                           <span>{ride.to}</span>
                         </div>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs text-gray-500">{ride.time}</span>
+                          <span className={`text-xs transition-colors ${
+                            isDark ? 'text-gray-400' : 'text-gray-500'
+                          }`}>{ride.time}</span>
                           <div className="flex items-center gap-1">
                             {[...Array(ride.rating)].map((_, i) => (
                               <Star key={i} className="w-3 h-3 text-yellow-400 fill-current" />
@@ -326,7 +437,7 @@ export default function DriverHome() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-semibold text-green-600">₹{ride.fare}</div>
+                      <div className="font-semibold text-green-500 text-lg">₹{ride.fare}</div>
                     </div>
                   </div>
                 ))}
@@ -337,7 +448,18 @@ export default function DriverHome() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Earnings Summary */}
-            <Card className="shadow-lg border-0 bg-gradient-to-r from-green-500 to-green-600 text-white">
+            <Card className={`shadow-2xl border-0 transition-all duration-500 ${
+              isDark 
+                ? 'bg-gradient-to-br from-green-600/90 to-green-700/90 backdrop-blur-xl border border-green-500/30 shadow-green-500/20' 
+                : 'bg-gradient-to-r from-green-500 to-green-600'
+            } text-white`} style={{
+              background: isDark 
+                ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.9) 0%, rgba(21, 128, 61, 0.9) 100%)'
+                : undefined,
+              boxShadow: isDark 
+                ? '0 25px 50px -12px rgba(34, 197, 94, 0.25), 0 0 0 1px rgba(34, 197, 94, 0.1)'
+                : undefined
+            }}>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="w-5 h-5" />
@@ -357,7 +479,15 @@ export default function DriverHome() {
                   <div className="text-sm opacity-90">This Month</div>
                   <div className="text-xl font-semibold">₹{earnings.month}</div>
                 </div>
-                <Button variant="secondary" size="sm" className="w-full">
+                <Button 
+                  variant="secondary" 
+                  size="sm" 
+                  className={`w-full transition-all duration-300 ${
+                    isDark 
+                      ? 'bg-white/20 hover:bg-white/30 text-white border-white/30' 
+                      : 'bg-white/20 hover:bg-white/30 text-white'
+                  }`}
+                >
                   <BarChart3 className="w-4 h-4 mr-2" />
                   View Details
                 </Button>
@@ -365,28 +495,51 @@ export default function DriverHome() {
             </Card>
 
             {/* Vehicle Status */}
-            <Card className="shadow-lg border-0">
+            <Card className={`shadow-xl border-0 transition-all duration-300 ${
+              isDark 
+                ? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl border border-cyan-500/20' 
+                : 'bg-white'
+            }`}>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Car className="w-5 h-5" />
+                <CardTitle className={`flex items-center gap-2 transition-colors ${
+                  isDark ? 'text-white' : 'text-gray-900'
+                }`}>
+                  <Car className={`w-5 h-5 transition-colors ${
+                    isDark ? 'text-cyan-400' : 'text-blue-600'
+                  }`} />
                   Vehicle Status
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Fuel Level</span>
+                  <span className={`text-sm transition-colors ${
+                    isDark ? 'text-gray-300' : 'text-gray-600'
+                  }`}>Fuel Level</span>
                   <div className="flex items-center gap-2">
-                    <Fuel className="w-4 h-4 text-blue-500" />
-                    <span className="font-medium">75%</span>
+                    <Fuel className={`w-4 h-4 transition-colors ${
+                      isDark ? 'text-cyan-400' : 'text-blue-500'
+                    }`} />
+                    <span className={`font-medium transition-colors ${
+                      isDark ? 'text-white' : 'text-gray-900'
+                    }`}>75%</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Next Service</span>
-                  <span className="font-medium">4,000 km</span>
+                  <span className={`text-sm transition-colors ${
+                    isDark ? 'text-gray-300' : 'text-gray-600'
+                  }`}>Next Service</span>
+                  <span className={`font-medium transition-colors ${
+                    isDark ? 'text-white' : 'text-gray-900'
+                  }`}>4,000 km</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Insurance</span>
-                  <Badge variant="secondary" className="bg-green-100 text-green-800">
+                  <span className={`text-sm transition-colors ${
+                    isDark ? 'text-gray-300' : 'text-gray-600'
+                  }`}>Insurance</span>
+                  <Badge 
+                    variant="secondary" 
+                    className="bg-green-100 text-green-800 shadow-lg shadow-green-500/20"
+                  >
                     Active
                   </Badge>
                 </div>
@@ -394,20 +547,47 @@ export default function DriverHome() {
             </Card>
 
             {/* Quick Actions */}
-            <Card className="shadow-lg border-0">
+            <Card className={`shadow-xl border-0 transition-all duration-300 ${
+              isDark 
+                ? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl border border-cyan-500/20' 
+                : 'bg-white'
+            }`}>
               <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
+                <CardTitle className={`transition-colors ${
+                  isDark ? 'text-white' : 'text-gray-900'
+                }`}>Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button variant="outline" className="w-full justify-start">
+                <Button 
+                  variant="outline" 
+                  className={`w-full justify-start transition-all duration-300 ${
+                    isDark 
+                      ? 'border-slate-600 text-gray-300 hover:bg-slate-700 hover:text-white hover:border-cyan-500' 
+                      : 'border-gray-200 hover:bg-gray-50'
+                  }`}
+                >
                   <Calendar className="w-4 h-4 mr-2" />
                   Schedule Break
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button 
+                  variant="outline" 
+                  className={`w-full justify-start transition-all duration-300 ${
+                    isDark 
+                      ? 'border-slate-600 text-gray-300 hover:bg-slate-700 hover:text-white hover:border-cyan-500' 
+                      : 'border-gray-200 hover:bg-gray-50'
+                  }`}
+                >
                   <Settings className="w-4 h-4 mr-2" />
                   Vehicle Settings
                 </Button>
-                <Button variant="outline" className="w-full justify-start">
+                <Button 
+                  variant="outline" 
+                  className={`w-full justify-start transition-all duration-300 ${
+                    isDark 
+                      ? 'border-slate-600 text-gray-300 hover:bg-slate-700 hover:text-white hover:border-cyan-500' 
+                      : 'border-gray-200 hover:bg-gray-50'
+                  }`}
+                >
                   <BarChart3 className="w-4 h-4 mr-2" />
                   Earnings Report
                 </Button>
