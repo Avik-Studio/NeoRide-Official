@@ -243,15 +243,16 @@ export default function Signup() {
                     )}
                   </button>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-3">
                   <Checkbox 
                     id="customer-signup-terms" 
                     checked={customerData.agree}
                     onCheckedChange={(checked) => setCustomerData({...customerData, agree: checked as boolean})}
+                    className="w-5 h-5 border-2 border-gray-300 rounded data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                   />
-                  <label htmlFor="customer-signup-terms" className="text-sm text-gray-600">
+                  <label htmlFor="customer-signup-terms" className="text-sm text-gray-700 cursor-pointer">
                     I agree to the{' '}
-                    <Link to="/terms" className="text-blue-600 hover:underline">
+                    <Link to="/terms" className="text-blue-600 hover:underline font-medium">
                       Terms and Conditions
                     </Link>
                   </label>
@@ -353,15 +354,16 @@ export default function Signup() {
                     )}
                   </button>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-3">
                   <Checkbox 
                     id="driver-signup-terms" 
                     checked={driverData.agree}
                     onCheckedChange={(checked) => setDriverData({...driverData, agree: checked as boolean})}
+                    className="w-5 h-5 border-2 border-gray-300 rounded data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
                   />
-                  <label htmlFor="driver-signup-terms" className="text-sm text-gray-600">
+                  <label htmlFor="driver-signup-terms" className="text-sm text-gray-700 cursor-pointer">
                     I agree to the{' '}
-                    <Link to="/terms" className="text-green-600 hover:underline">
+                    <Link to="/terms" className="text-green-600 hover:underline font-medium">
                       Terms and Conditions
                     </Link>
                   </label>

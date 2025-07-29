@@ -220,15 +220,16 @@ export default function Login() {
                     )}
                   </button>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-3">
                   <Checkbox 
                     id="customer-terms" 
                     checked={customerAgree}
                     onCheckedChange={(checked) => setCustomerAgree(checked as boolean)}
+                    className="w-5 h-5 border-2 border-gray-300 rounded data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                   />
-                  <label htmlFor="customer-terms" className="text-sm text-gray-600">
+                  <label htmlFor="customer-terms" className="text-sm text-gray-700 cursor-pointer">
                     I agree to the{' '}
-                    <Link to="/terms" className="text-blue-600 hover:underline">
+                    <Link to="/terms" className="text-blue-600 hover:underline font-medium">
                       Terms and Conditions
                     </Link>
                   </label>
@@ -272,15 +273,16 @@ export default function Login() {
                     )}
                   </button>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-3">
                   <Checkbox 
                     id="driver-terms" 
                     checked={driverAgree}
                     onCheckedChange={(checked) => setDriverAgree(checked as boolean)}
+                    className="w-5 h-5 border-2 border-gray-300 rounded data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
                   />
-                  <label htmlFor="driver-terms" className="text-sm text-gray-600">
+                  <label htmlFor="driver-terms" className="text-sm text-gray-700 cursor-pointer">
                     I agree to the{' '}
-                    <Link to="/terms" className="text-blue-600 hover:underline">
+                    <Link to="/terms" className="text-green-600 hover:underline font-medium">
                       Terms and Conditions
                     </Link>
                   </label>
