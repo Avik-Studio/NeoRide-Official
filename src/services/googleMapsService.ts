@@ -26,16 +26,18 @@ interface FareCalculation {
     distanceCost: number;
     total: number;
   };
+  priceBreakdown?: string; // Detailed breakdown for UI display
 }
 
 // Current petrol price in Kolkata (average of last 2 months)
 const CURRENT_PETROL_PRICE = 106.50; // INR per liter (Jan 2025 average)
 
-// Pricing configuration as per requirements
+// Pricing configuration as per requirements - 3-tier pricing system
 const PRICING_CONFIG = {
   baseFare: 50, // Base fare in INR
-  rateUnder10km: 25, // INR per km for distance under 10km
-  rateOver10km: 35, // INR per km for distance over 10km
+  rate1to10km: 18, // INR per km for 1-10km
+  rate11to30km: 22, // INR per km for 11-30km
+  rate30plusKm: 25, // INR per km for 30+ km
   petrolPrice: CURRENT_PETROL_PRICE,
 };
 
@@ -110,18 +112,31 @@ class GoogleMapsService {
     const distanceInKm = distanceInMeters / 1000;
     const durationInMinutes = Math.ceil(durationInSeconds / 60);
 
-    // Apply pricing algorithm as per requirements
-    let perKmRate: number;
-    let distanceFare: number;
+    // Apply 3-tier pricing algorithm as per requirements
+    let distanceFare = 0;
+    let averageRate = 0;
+    let priceBreakdown = '';
 
     if (distanceInKm <= 10) {
-      // Under or equal to 10km: ₹25 per km
-      perKmRate = PRICING_CONFIG.rateUnder10km;
-      distanceFare = distanceInKm * perKmRate;
+      // 1-10km: ₹18 per km
+      distanceFare = distanceInKm * PRICING_CONFIG.rate1to10km;
+      averageRate = PRICING_CONFIG.rate1to10km;
+      priceBreakdown = `${distanceInKm.toFixed(1)}km × ₹${PRICING_CONFIG.rate1to10km}/km`;
+    } else if (distanceInKm <= 30) {
+      // 11-30km: First 10km at ₹18/km + remaining at ₹22/km
+      const first10km = 10 * PRICING_CONFIG.rate1to10km;
+      const remaining = (distanceInKm - 10) * PRICING_CONFIG.rate11to30km;
+      distanceFare = first10km + remaining;
+      averageRate = Math.round(distanceFare / distanceInKm);
+      priceBreakdown = `10km × ₹${PRICING_CONFIG.rate1to10km} + ${(distanceInKm - 10).toFixed(1)}km × ₹${PRICING_CONFIG.rate11to30km}`;
     } else {
-      // Over 10km: ₹35 per km
-      perKmRate = PRICING_CONFIG.rateOver10km;
-      distanceFare = distanceInKm * perKmRate;
+      // 30+ km: First 10km at ₹18/km + next 20km at ₹22/km + remaining at ₹25/km
+      const first10km = 10 * PRICING_CONFIG.rate1to10km;
+      const next20km = 20 * PRICING_CONFIG.rate11to30km;
+      const remaining = (distanceInKm - 30) * PRICING_CONFIG.rate30plusKm;
+      distanceFare = first10km + next20km + remaining;
+      averageRate = Math.round(distanceFare / distanceInKm);
+      priceBreakdown = `10km × ₹${PRICING_CONFIG.rate1to10km} + 20km × ₹${PRICING_CONFIG.rate11to30km} + ${(distanceInKm - 30).toFixed(1)}km × ₹${PRICING_CONFIG.rate30plusKm}`;
     }
 
     const baseFare = PRICING_CONFIG.baseFare;
@@ -133,13 +148,14 @@ class GoogleMapsService {
       baseFare,
       distanceFare: Math.round(distanceFare),
       totalFare: Math.round(totalFare),
-      perKmRate,
+      perKmRate: averageRate,
       petrolPrice: PRICING_CONFIG.petrolPrice,
       breakdown: {
         baseFare,
         distanceCost: Math.round(distanceFare),
         total: Math.round(totalFare),
       },
+      priceBreakdown, // Add detailed breakdown for UI
     };
   }
 
@@ -179,12 +195,30 @@ class GoogleMapsService {
 
   // Get pricing breakdown for display
   getPricingInfo(distanceInKm: number) {
-    const rate = distanceInKm <= 10 ? PRICING_CONFIG.rateUnder10km : PRICING_CONFIG.rateOver10km;
+    let rate: number;
+    let priceCategory: string;
+
+    if (distanceInKm <= 10) {
+      rate = PRICING_CONFIG.rate1to10km;
+      priceCategory = '1-10km';
+    } else if (distanceInKm <= 30) {
+      rate = PRICING_CONFIG.rate11to30km;
+      priceCategory = '11-30km';
+    } else {
+      rate = PRICING_CONFIG.rate30plusKm;
+      priceCategory = '30+ km';
+    }
+
     return {
       baseFare: PRICING_CONFIG.baseFare,
       perKmRate: rate,
       petrolPrice: PRICING_CONFIG.petrolPrice,
-      priceCategory: distanceInKm <= 10 ? 'Under 10km' : 'Over 10km',
+      priceCategory,
+      allRates: {
+        tier1: PRICING_CONFIG.rate1to10km,
+        tier2: PRICING_CONFIG.rate11to30km,
+        tier3: PRICING_CONFIG.rate30plusKm,
+      },
     };
   }
 }
