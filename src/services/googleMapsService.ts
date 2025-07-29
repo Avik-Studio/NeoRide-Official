@@ -26,7 +26,7 @@ interface FareCalculation {
     distanceCost: number;
     total: number;
   };
-  priceBreakdown?: string; // Detailed breakdown for UI display
+  priceCategory?: string; // Price category for UI display (e.g., "1-10km")
 }
 
 // Current petrol price in Kolkata (average of last 2 months)
@@ -114,29 +114,29 @@ class GoogleMapsService {
 
     // Apply 3-tier pricing algorithm as per requirements
     let distanceFare = 0;
-    let averageRate = 0;
-    let priceBreakdown = '';
+    let currentRate = 0;
+    let priceCategory = '';
 
     if (distanceInKm <= 10) {
       // 1-10km: ₹18 per km
       distanceFare = distanceInKm * PRICING_CONFIG.rate1to10km;
-      averageRate = PRICING_CONFIG.rate1to10km;
-      priceBreakdown = `${distanceInKm.toFixed(1)}km × ₹${PRICING_CONFIG.rate1to10km}/km`;
+      currentRate = PRICING_CONFIG.rate1to10km;
+      priceCategory = '1-10km';
     } else if (distanceInKm <= 30) {
       // 11-30km: First 10km at ₹18/km + remaining at ₹22/km
       const first10km = 10 * PRICING_CONFIG.rate1to10km;
       const remaining = (distanceInKm - 10) * PRICING_CONFIG.rate11to30km;
       distanceFare = first10km + remaining;
-      averageRate = Math.round(distanceFare / distanceInKm);
-      priceBreakdown = `10km × ₹${PRICING_CONFIG.rate1to10km} + ${(distanceInKm - 10).toFixed(1)}km × ₹${PRICING_CONFIG.rate11to30km}`;
+      currentRate = PRICING_CONFIG.rate11to30km; // Show the current tier rate
+      priceCategory = '11-30km';
     } else {
       // 30+ km: First 10km at ₹18/km + next 20km at ₹22/km + remaining at ₹25/km
       const first10km = 10 * PRICING_CONFIG.rate1to10km;
       const next20km = 20 * PRICING_CONFIG.rate11to30km;
       const remaining = (distanceInKm - 30) * PRICING_CONFIG.rate30plusKm;
       distanceFare = first10km + next20km + remaining;
-      averageRate = Math.round(distanceFare / distanceInKm);
-      priceBreakdown = `10km × ₹${PRICING_CONFIG.rate1to10km} + 20km × ₹${PRICING_CONFIG.rate11to30km} + ${(distanceInKm - 30).toFixed(1)}km × ₹${PRICING_CONFIG.rate30plusKm}`;
+      currentRate = PRICING_CONFIG.rate30plusKm; // Show the current tier rate
+      priceCategory = '30+ km';
     }
 
     const baseFare = PRICING_CONFIG.baseFare;
@@ -148,14 +148,14 @@ class GoogleMapsService {
       baseFare,
       distanceFare: Math.round(distanceFare),
       totalFare: Math.round(totalFare),
-      perKmRate: averageRate,
+      perKmRate: currentRate, // Current tier rate instead of average
       petrolPrice: PRICING_CONFIG.petrolPrice,
       breakdown: {
         baseFare,
         distanceCost: Math.round(distanceFare),
         total: Math.round(totalFare),
       },
-      priceBreakdown, // Add detailed breakdown for UI
+      priceCategory, // Add price category for UI
     };
   }
 

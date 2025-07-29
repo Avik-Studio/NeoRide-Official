@@ -158,7 +158,7 @@ export const RoutePreview: React.FC<RoutePreviewProps> = ({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">
-                    Distance ({fareData.priceBreakdown || `${fareData.distance} × ₹${fareData.perKmRate}/km avg`})
+                    Distance ({fareData.distance})
                   </span>
                   <span className="font-medium">₹{fareData.distanceFare}</span>
                 </div>
@@ -170,26 +170,14 @@ export const RoutePreview: React.FC<RoutePreviewProps> = ({
             </div>
 
             {/* Additional Info */}
-            <div className="space-y-2 mb-4">
-              <div className="flex items-center justify-between text-xs text-gray-600">
-                <div className="flex items-center gap-1">
-                  <Fuel className="w-3 h-3" />
-                  <span>Petrol: ₹{fareData.petrolPrice}/L</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Info className="w-3 h-3" />
-                  <span>Avg Rate: ₹{fareData.perKmRate}/km</span>
-                </div>
+            <div className="flex items-center justify-between text-xs text-gray-600 mb-4">
+              <div className="flex items-center gap-1">
+                <Fuel className="w-3 h-3" />
+                <span>Petrol: ₹{fareData.petrolPrice}/L</span>
               </div>
-              
-              {/* Pricing Tiers Info */}
-              <div className="bg-blue-50 rounded-md p-2 text-xs">
-                <div className="font-medium text-blue-800 mb-1">Pricing Tiers:</div>
-                <div className="text-blue-700 space-y-0.5">
-                  <div>1-10km: ₹18/km</div>
-                  <div>11-30km: ₹22/km</div>
-                  <div>30+ km: ₹25/km</div>
-                </div>
+              <div className="flex items-center gap-1">
+                <Info className="w-3 h-3" />
+                <span>₹{fareData.perKmRate}/km ({fareData.priceCategory})</span>
               </div>
             </div>
 
