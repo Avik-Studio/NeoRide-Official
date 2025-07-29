@@ -198,7 +198,7 @@ export default function Login() {
                   placeholder="Email or Phone Number"
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
-                  className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
+                  className="h-12 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg text-gray-900"
                 />
                 <div className="relative">
                   <Input
@@ -206,7 +206,7 @@ export default function Login() {
                     placeholder="Password"
                     value={customerPassword}
                     onChange={(e) => setCustomerPassword(e.target.value)}
-                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg pr-12"
+                    className="h-12 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg pr-12 text-gray-900"
                   />
                   <button
                     type="button"
@@ -250,7 +250,7 @@ export default function Login() {
                   placeholder="Email or Phone Number"
                   value={driverEmail}
                   onChange={(e) => setDriverEmail(e.target.value)}
-                  className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
+                  className="h-12 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg text-gray-900"
                 />
                 <div className="relative">
                   <Input
@@ -258,7 +258,7 @@ export default function Login() {
                     placeholder="Password"
                     value={driverPassword}
                     onChange={(e) => setDriverPassword(e.target.value)}
-                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg pr-12"
+                    className="h-12 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg pr-12 text-gray-900"
                   />
                   <button
                     type="button"
@@ -302,7 +302,7 @@ export default function Login() {
                   placeholder="Admin Email"
                   value={adminEmail}
                   onChange={(e) => setAdminEmail(e.target.value)}
-                  className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
+                  className="h-12 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg text-gray-900"
                 />
                 <div className="relative">
                   <Input
@@ -310,7 +310,7 @@ export default function Login() {
                     placeholder="Admin Password"
                     value={adminPassword}
                     onChange={(e) => setAdminPassword(e.target.value)}
-                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg pr-12"
+                    className="h-12 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg pr-12 text-gray-900"
                   />
                   <button
                     type="button"

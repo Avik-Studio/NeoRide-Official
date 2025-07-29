@@ -180,28 +180,28 @@ export default function Signup() {
                   placeholder="Full Name"
                   value={customerData.name}
                   onChange={(e) => setCustomerData({...customerData, name: e.target.value})}
-                  className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
+                  className="h-12 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg text-gray-900"
                 />
                 <Input
                   type="email"
                   placeholder="Email Address"
                   value={customerData.email}
                   onChange={(e) => setCustomerData({...customerData, email: e.target.value})}
-                  className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
+                  className="h-12 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg text-gray-900"
                 />
                 <Input
                   type="email"
                   placeholder="Confirm Email"
                   value={customerData.confirmEmail}
                   onChange={(e) => setCustomerData({...customerData, confirmEmail: e.target.value})}
-                  className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
+                  className="h-12 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg text-gray-900"
                 />
                 <Input
                   type="tel"
                   placeholder="Phone Number"
                   value={customerData.phone}
                   onChange={(e) => setCustomerData({...customerData, phone: e.target.value})}
-                  className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
+                  className="h-12 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg text-gray-900"
                 />
                 <div className="relative">
                   <Input
@@ -209,7 +209,7 @@ export default function Signup() {
                     placeholder="Password"
                     value={customerData.password}
                     onChange={(e) => setCustomerData({...customerData, password: e.target.value})}
-                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg pr-12"
+                    className="h-12 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg pr-12 text-gray-900"
                   />
                   <button
                     type="button"
@@ -229,7 +229,7 @@ export default function Signup() {
                     placeholder="Confirm Password"
                     value={customerData.confirmPassword}
                     onChange={(e) => setCustomerData({...customerData, confirmPassword: e.target.value})}
-                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg pr-12"
+                    className="h-12 bg-white border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-lg pr-12 text-gray-900"
                   />
                   <button
                     type="button"
@@ -272,46 +272,46 @@ export default function Signup() {
                   placeholder="Full Name"
                   value={driverData.name}
                   onChange={(e) => setDriverData({...driverData, name: e.target.value})}
-                  className="h-12 border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg"
+                  className="h-12 bg-white border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg text-gray-900"
                 />
                 <Input
                   type="email"
                   placeholder="Email Address"
                   value={driverData.email}
                   onChange={(e) => setDriverData({...driverData, email: e.target.value})}
-                  className="h-12 border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg"
+                  className="h-12 bg-white border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg text-gray-900"
                 />
                 <Input
                   type="email"
                   placeholder="Confirm Email"
                   value={driverData.confirmEmail}
                   onChange={(e) => setDriverData({...driverData, confirmEmail: e.target.value})}
-                  className="h-12 border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg"
+                  className="h-12 bg-white border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg text-gray-900"
                 />
                 <Input
                   type="tel"
                   placeholder="Phone Number"
                   value={driverData.phone}
                   onChange={(e) => setDriverData({...driverData, phone: e.target.value})}
-                  className="h-12 border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg"
+                  className="h-12 bg-white border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg text-gray-900"
                 />
                 <Input
                   placeholder="Driver License Number"
                   value={driverData.licenseNumber}
                   onChange={(e) => setDriverData({...driverData, licenseNumber: e.target.value})}
-                  className="h-12 border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg"
+                  className="h-12 bg-white border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg text-gray-900"
                 />
                 <Input
                   placeholder="Vehicle Model (e.g., Toyota Camry)"
                   value={driverData.vehicleModel}
                   onChange={(e) => setDriverData({...driverData, vehicleModel: e.target.value})}
-                  className="h-12 border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg"
+                  className="h-12 bg-white border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg text-gray-900"
                 />
                 <Input
                   placeholder="License Plate Number"
                   value={driverData.vehiclePlate}
                   onChange={(e) => setDriverData({...driverData, vehiclePlate: e.target.value})}
-                  className="h-12 border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg"
+                  className="h-12 bg-white border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg text-gray-900"
                 />
                 <div className="relative">
                   <Input
@@ -319,7 +319,7 @@ export default function Signup() {
                     placeholder="Password"
                     value={driverData.password}
                     onChange={(e) => setDriverData({...driverData, password: e.target.value})}
-                    className="h-12 border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg pr-12"
+                    className="h-12 bg-white border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg pr-12 text-gray-900"
                   />
                   <button
                     type="button"
@@ -339,7 +339,7 @@ export default function Signup() {
                     placeholder="Confirm Password"
                     value={driverData.confirmPassword}
                     onChange={(e) => setDriverData({...driverData, confirmPassword: e.target.value})}
-                    className="h-12 border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg pr-12"
+                    className="h-12 bg-white border-gray-200 focus:border-green-500 focus:ring-green-500 rounded-lg pr-12 text-gray-900"
                   />
                   <button
                     type="button"
