@@ -20,6 +20,7 @@ import {
   getTrafficCondition
 } from '@/utils/routeCalculator'
 import { RoutePreview } from '@/components/RoutePreview'
+import { useTheme } from '@/contexts/ThemeContext'
 import { 
   MapPin, 
   Clock, 
@@ -50,6 +51,7 @@ export default function CustomerHome() {
   const { user: authUser } = useAuth()
   const { user: neoRideUser, setUser } = useUser()
   const navigate = useNavigate()
+  const { isDark } = useTheme()
 
   // Authentication check
   useEffect(() => {
@@ -154,7 +156,15 @@ export default function CustomerHome() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
+    <div className={`min-h-screen transition-all duration-500 ${
+      isDark 
+        ? 'bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800' 
+        : 'bg-gradient-to-br from-blue-50 to-white'
+    }`} style={{
+      background: isDark 
+        ? 'linear-gradient(135deg, #0B1B3A 0%, #101E4B 30%, #1a2332 70%, #0f1419 100%)'
+        : undefined
+    }}>
       {/* Navbar */}
       {neoRideUser ? (
         <Navbar 
@@ -164,7 +174,11 @@ export default function CustomerHome() {
           onUpdateUser={handleUpdateUser}
         />
       ) : (
-        <div className="w-full bg-white border-b shadow-sm">
+        <div className={`w-full border-b shadow-sm transition-all duration-300 ${
+          isDark 
+            ? 'bg-gradient-to-r from-slate-900 to-slate-800 border-slate-700' 
+            : 'bg-white border-gray-200'
+        }`}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center space-x-3">
@@ -183,17 +197,35 @@ export default function CustomerHome() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className={`text-3xl font-bold transition-colors duration-300 ${
+              isDark 
+                ? 'bg-gradient-to-r from-white to-cyan-200 bg-clip-text text-transparent' 
+                : 'text-gray-900'
+            }`}>
               Welcome back{neoRideUser?.name ? `, ${neoRideUser.name}` : ''}!
             </h1>
-            <p className="text-gray-600">Where would you like to go today?</p>
+            <p className={`transition-colors duration-300 ${
+              isDark ? 'text-gray-300' : 'text-gray-600'
+            }`}>Where would you like to go today?</p>
           </div>
           <div className="flex items-center gap-4">
-            <Badge variant="secondary" className="px-3 py-1">
+            <Badge className={`px-3 py-1 transition-all duration-300 ${
+              isDark 
+                ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white shadow-lg' 
+                : 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800'
+            }`}>
               <Wallet className="w-4 h-4 mr-2" />
               ₹1,250.50
             </Badge>
-            <Button variant="outline" size="icon">
+            <Button 
+              variant="outline" 
+              size="icon"
+              className={`transition-all duration-300 ${
+                isDark 
+                  ? 'border-slate-600 bg-slate-700 text-white hover:bg-slate-600 hover:border-cyan-500' 
+                  : 'border-gray-300 hover:bg-gray-50'
+              }`}
+            >
               <Settings className="w-4 h-4" />
             </Button>
           </div>
@@ -202,13 +234,37 @@ export default function CustomerHome() {
         {/* Main Content - Booking and Map */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Book a Ride Card - Medium Size */}
-          <Card className="shadow-lg border-0 bg-white">
-            <CardHeader className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-t-lg">
+          <Card className={`shadow-2xl border-0 transition-all duration-500 ${
+            isDark 
+              ? 'bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-xl border border-cyan-500/30 shadow-cyan-500/20' 
+              : 'bg-white shadow-blue-100/50'
+          }`} style={{
+            background: isDark 
+              ? 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%)'
+              : undefined,
+            boxShadow: isDark 
+              ? '0 25px 50px -12px rgba(0, 198, 255, 0.15), 0 0 0 1px rgba(0, 198, 255, 0.1)'
+              : undefined
+          }}>
+            <CardHeader className={`rounded-t-lg transition-all duration-500 ${
+              isDark 
+                ? 'bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-600 text-white shadow-lg' 
+                : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white'
+            }`} style={{
+              background: isDark 
+                ? 'linear-gradient(135deg, #00D4FF 0%, #0099FF 50%, #0066FF 100%)'
+                : undefined,
+              boxShadow: isDark 
+                ? '0 10px 25px -5px rgba(0, 212, 255, 0.3)'
+                : undefined
+            }}>
               <CardTitle className="flex items-center gap-2">
                 <Car className="w-5 h-5" />
                 Book Your Ride
               </CardTitle>
-              <CardDescription className="text-blue-100">
+              <CardDescription className={`transition-colors ${
+                isDark ? 'text-cyan-100' : 'text-blue-100'
+              }`}>
                 Enter your pickup and destination
               </CardDescription>
             </CardHeader>
@@ -220,7 +276,16 @@ export default function CustomerHome() {
                     placeholder="Pickup location"
                     value={pickupLocation}
                     onChange={(e) => setPickupLocation(e.target.value)}
-                    className="pl-12 h-12 border-2 border-gray-200 focus:border-blue-500 rounded-lg"
+                    className={`pl-12 h-12 border-2 rounded-lg transition-all duration-300 ${
+                      isDark 
+                        ? 'bg-slate-800/50 border-cyan-500/30 text-white placeholder:text-gray-300 focus:border-cyan-400 focus:bg-slate-700/70 focus:shadow-lg focus:shadow-cyan-500/20' 
+                        : 'border-gray-200 focus:border-blue-500'
+                    }`}
+                    style={{
+                      background: isDark 
+                        ? 'linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.6) 100%)'
+                        : undefined
+                    }}
                   />
                 </div>
                 <div className="relative">
@@ -229,7 +294,16 @@ export default function CustomerHome() {
                     placeholder="Where to?"
                     value={dropLocation}
                     onChange={(e) => setDropLocation(e.target.value)}
-                    className="pl-12 h-12 border-2 border-gray-200 focus:border-blue-500 rounded-lg"
+                    className={`pl-12 h-12 border-2 rounded-lg transition-all duration-300 ${
+                      isDark 
+                        ? 'bg-slate-800/50 border-cyan-500/30 text-white placeholder:text-gray-300 focus:border-cyan-400 focus:bg-slate-700/70 focus:shadow-lg focus:shadow-cyan-500/20' 
+                        : 'border-gray-200 focus:border-blue-500'
+                    }`}
+                    style={{
+                      background: isDark 
+                        ? 'linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.6) 100%)'
+                        : undefined
+                    }}
                   />
                 </div>
               </div>
@@ -237,7 +311,19 @@ export default function CustomerHome() {
               {rideStatus === 'idle' && (
                 <Button 
                   onClick={handleBookRide}
-                  className="w-full h-12 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-200"
+                  className={`w-full h-12 font-semibold rounded-lg shadow-xl transition-all duration-500 transform hover:scale-105 ${
+                    isDark 
+                      ? 'bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-600 hover:from-cyan-400 hover:via-blue-400 hover:to-indigo-500 text-white shadow-cyan-500/30 hover:shadow-cyan-400/40' 
+                      : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white'
+                  }`}
+                  style={{
+                    background: isDark 
+                      ? 'linear-gradient(135deg, #00D4FF 0%, #0099FF 50%, #0066FF 100%)'
+                      : undefined,
+                    boxShadow: isDark 
+                      ? '0 10px 30px -5px rgba(0, 212, 255, 0.4), 0 0 20px rgba(0, 212, 255, 0.2)'
+                      : undefined
+                  }}
                 >
                   <Search className="w-5 h-5 mr-2" />
                   Search & Book Ride
@@ -301,13 +387,23 @@ export default function CustomerHome() {
           </Card>
 
           {/* Map Section */}
-          <Card className="shadow-lg border-0 bg-white">
+          <Card className={`shadow-xl border-0 transition-all duration-300 ${
+            isDark 
+              ? 'bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-600' 
+              : 'bg-white'
+          }`}>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="w-5 h-5" />
+              <CardTitle className={`flex items-center gap-2 transition-colors duration-300 ${
+                isDark ? 'text-white' : 'text-gray-900'
+              }`}>
+                <MapPin className={`w-5 h-5 transition-colors ${
+                  isDark ? 'text-cyan-400' : 'text-blue-600'
+                }`} />
                 Route Map
               </CardTitle>
-              <CardDescription>
+              <CardDescription className={`transition-colors duration-300 ${
+                isDark ? 'text-gray-300' : 'text-gray-600'
+              }`}>
                 {pickupLocation && dropLocation 
                   ? 'Your route is displayed below' 
                   : 'Click on the map to select locations or enter them manually'
@@ -330,13 +426,23 @@ export default function CustomerHome() {
           <div className="lg:col-span-2 space-y-6">
 
             {/* Quick Location Suggestions */}
-            <Card className="shadow-lg border-0">
+            <Card className={`shadow-xl border-0 transition-all duration-300 ${
+              isDark 
+                ? 'bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-600' 
+                : 'bg-white'
+            }`}>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <MapPin className="w-5 h-5" />
+                <CardTitle className={`flex items-center gap-2 transition-colors duration-300 ${
+                  isDark ? 'text-white' : 'text-gray-900'
+                }`}>
+                  <MapPin className={`w-5 h-5 transition-colors ${
+                    isDark ? 'text-cyan-400' : 'text-blue-600'
+                  }`} />
                   Quick Destinations
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className={`transition-colors duration-300 ${
+                  isDark ? 'text-gray-300' : 'text-gray-600'
+                }`}>
                   Popular locations near you
                 </CardDescription>
               </CardHeader>
@@ -353,7 +459,11 @@ export default function CustomerHome() {
                     <Button
                       key={location.name}
                       variant="outline"
-                      className="h-16 flex-col gap-1 text-left p-3"
+                      className={`h-16 flex-col gap-1 text-left p-3 transition-all duration-300 ${
+                        isDark 
+                          ? 'border-slate-600 bg-slate-700 text-white hover:bg-slate-600 hover:border-cyan-500' 
+                          : 'border-gray-200 hover:bg-gray-50'
+                      }`}
                       onClick={() => {
                         if (!pickupLocation) {
                           setPickupLocation(location.address)
@@ -401,27 +511,45 @@ export default function CustomerHome() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Recent Rides */}
-            <Card className="shadow-lg border-0">
+            <Card className={`shadow-xl border-0 transition-all duration-300 ${
+              isDark 
+                ? 'bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-600' 
+                : 'bg-white'
+            }`}>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <History className="w-5 h-5" />
+                <CardTitle className={`flex items-center gap-2 transition-colors duration-300 ${
+                  isDark ? 'text-white' : 'text-gray-900'
+                }`}>
+                  <History className={`w-5 h-5 transition-colors ${
+                    isDark ? 'text-cyan-400' : 'text-blue-600'
+                  }`} />
                   Recent Rides
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {recentRides.map((ride) => (
-                  <div key={ride.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div key={ride.id} className={`flex items-center justify-between p-3 rounded-lg transition-all duration-300 ${
+                    isDark 
+                      ? 'bg-slate-700 border border-slate-600' 
+                      : 'bg-gray-50'
+                  }`}>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 text-sm">
                         <MapPin className="w-4 h-4 text-green-500" />
-                        <span className="font-medium">{ride.from}</span>
+                        <span className={`font-medium transition-colors ${
+                          isDark ? 'text-white' : 'text-gray-900'
+                        }`}>{ride.from}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <div className="flex items-center gap-2 text-sm">
                         <MapPin className="w-4 h-4 text-red-500" />
-                        <span>{ride.to}</span>
+                        <span className={`transition-colors ${
+                          isDark ? 'text-gray-300' : 'text-gray-600'
+                        }`}>{ride.to}</span>
                       </div>
                       <div className="flex items-center justify-between mt-2">
-                        <span className="text-xs text-gray-500">{ride.date}</span>
+                        <span className={`text-xs transition-colors ${
+                          isDark ? 'text-gray-400' : 'text-gray-500'
+                        }`}>{ride.date}</span>
                         <div className="flex items-center gap-1">
                           {[...Array(ride.rating)].map((_, i) => (
                             <Star key={i} className="w-3 h-3 text-yellow-400 fill-current" />

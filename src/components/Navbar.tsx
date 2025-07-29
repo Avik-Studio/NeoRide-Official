@@ -13,6 +13,8 @@ import {
 import { Link } from 'react-router-dom'
 import ProfileModal from './ProfileModal'
 import SettingsModal from './SettingsModal'
+import { ThemeToggle } from './ThemeToggle'
+import { useTheme } from '../contexts/ThemeContext'
 
 interface User {
   id: string
@@ -33,6 +35,7 @@ interface NavbarProps {
 export default function Navbar({ user, onLogout, onUpdateUser }: NavbarProps) {
   const [showProfileModal, setShowProfileModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
+  const { isDark } = useTheme()
 
   if (!user) return null
 
@@ -54,26 +57,43 @@ export default function Navbar({ user, onLogout, onUpdateUser }: NavbarProps) {
   }
 
   return (
-    <nav className="w-full border-b bg-white shadow-sm sticky top-0 z-50">
+    <nav className={`w-full border-b shadow-sm sticky top-0 z-50 transition-all duration-300 ${
+      isDark 
+        ? 'bg-gradient-to-r from-slate-900 to-slate-800 border-slate-700' 
+        : 'bg-white border-gray-200'
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo Section */}
           <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-all duration-300 ${
+              isDark 
+                ? 'bg-gradient-to-r from-cyan-500 to-blue-500' 
+                : 'bg-gradient-to-r from-blue-600 to-blue-700'
+            }`}>
               <Car className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold text-gray-900">
+            <span className={`text-2xl font-bold transition-colors duration-300 ${
+              isDark ? 'text-white' : 'text-gray-900'
+            }`}>
               NeoRide
             </span>
           </Link>
 
           {/* User Profile Section */}
-          <div className="flex items-center">
+          <div className="flex items-center space-x-3">
+            {/* Theme Toggle */}
+            <ThemeToggle />
+            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button 
                   variant="ghost" 
-                  className="flex items-center space-x-3 px-3 py-2 rounded-full hover:bg-gray-50 transition-colors"
+                  className={`flex items-center space-x-3 px-3 py-2 rounded-full transition-colors ${
+                    isDark 
+                      ? 'hover:bg-slate-700 text-white' 
+                      : 'hover:bg-gray-50 text-gray-700'
+                  }`}
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={user.avatar} alt={user.name} />
@@ -82,10 +102,14 @@ export default function Navbar({ user, onLogout, onUpdateUser }: NavbarProps) {
                     </AvatarFallback>
                   </Avatar>
                   <div className="hidden sm:flex items-center space-x-2">
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className={`text-sm font-medium transition-colors ${
+                      isDark ? 'text-gray-200' : 'text-gray-700'
+                    }`}>
                       Hey {user.name.split(' ')[0]}
                     </span>
-                    <ChevronDown className="w-4 h-4 text-gray-500" />
+                    <ChevronDown className={`w-4 h-4 transition-colors ${
+                      isDark ? 'text-gray-400' : 'text-gray-500'
+                    }`} />
                   </div>
                 </Button>
               </DropdownMenuTrigger>

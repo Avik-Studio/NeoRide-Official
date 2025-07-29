@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useRouteCalculation } from '../hooks/useRouteCalculation';
 import { Skeleton } from './ui/skeleton';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface RoutePreviewProps {
   pickupLocation: string;
@@ -27,6 +28,7 @@ export const RoutePreview: React.FC<RoutePreviewProps> = ({
   dropLocation,
   onBookRide
 }) => {
+  const { isDark } = useTheme();
   const { isLoading, fareData, error, recalculate } = useRouteCalculation(
     pickupLocation,
     dropLocation
@@ -37,13 +39,21 @@ export const RoutePreview: React.FC<RoutePreviewProps> = ({
   }
 
   return (
-    <Card className="mt-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+    <Card className={`mt-4 transition-all duration-300 ${
+      isDark 
+        ? 'bg-gradient-to-r from-slate-800 to-slate-700 border-slate-600 shadow-xl' 
+        : 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200'
+    }`}>
       <CardContent className="p-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Navigation className="w-5 h-5 text-blue-600" />
-            <span className="font-semibold text-gray-900">Route Preview</span>
+            <Navigation className={`w-5 h-5 transition-colors ${
+              isDark ? 'text-cyan-400' : 'text-blue-600'
+            }`} />
+            <span className={`font-semibold transition-colors ${
+              isDark ? 'text-white' : 'text-gray-900'
+            }`}>Route Preview</span>
           </div>
           <Button
             variant="ghost"
@@ -61,8 +71,12 @@ export const RoutePreview: React.FC<RoutePreviewProps> = ({
           <div className="flex items-center gap-3">
             <div className="w-3 h-3 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
             <div className="flex-1">
-              <div className="text-sm font-medium text-gray-900">Pickup Location</div>
-              <div className="text-sm text-gray-600 truncate">{pickupLocation}</div>
+              <div className={`text-sm font-medium transition-colors ${
+                isDark ? 'text-white' : 'text-gray-900'
+              }`}>Pickup Location</div>
+              <div className={`text-sm truncate transition-colors ${
+                isDark ? 'text-gray-300' : 'text-gray-600'
+              }`}>{pickupLocation}</div>
             </div>
           </div>
           
