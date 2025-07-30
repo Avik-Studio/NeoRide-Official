@@ -1,6 +1,4 @@
-import connectDB from '../lib/mongodb';
-import Customer, { ICustomer } from '../models/Customer';
-import Driver, { IDriver } from '../models/Driver';
+import { mongoAPI, localStorageService } from '../api/mongodb';
 
 // Customer Service Functions
 export class CustomerService {
@@ -9,80 +7,75 @@ export class CustomerService {
     email: string;
     fullName: string;
     phone: string;
-  }): Promise<ICustomer> {
+  }): Promise<any> {
     try {
-      await connectDB();
-      
-      const customer = new Customer({
-        supabaseId: customerData.supabaseId,
-        email: customerData.email.toLowerCase(),
-        fullName: customerData.fullName,
-        phone: customerData.phone,
-        isVerified: false,
-        isActive: true,
-        preferences: {
-          notifications: true,
-          smsAlerts: true,
-          emailUpdates: true
-        },
-        paymentMethods: [{
-          type: 'cash',
-          isDefault: true
-        }],
-        totalRides: 0,
-        averageRating: 0
-      });
-
-      const savedCustomer = await customer.save();
-      console.log('✅ Customer saved to MongoDB:', savedCustomer._id);
-      return savedCustomer;
+      // Try to use MongoDB API first
+      try {
+        const result = await mongoAPI.createCustomer(customerData);
+        console.log('✅ Customer saved to MongoDB via API:', result._id);
+        return result;
+      } catch (apiError) {
+        console.warn('⚠️ MongoDB API not available, using localStorage fallback');
+        // Fallback to localStorage
+        const result = await localStorageService.createCustomer(customerData);
+        return result;
+      }
     } catch (error) {
-      console.error('❌ Error creating customer in MongoDB:', error);
+      console.error('❌ Error creating customer:', error);
       throw error;
     }
   }
 
-  static async getCustomerBySupabaseId(supabaseId: string): Promise<ICustomer | null> {
+  static async getCustomerBySupabaseId(supabaseId: string): Promise<any | null> {
     try {
-      await connectDB();
-      return await Customer.findBySupabaseId(supabaseId);
+      try {
+        return await mongoAPI.getCustomer(supabaseId);
+      } catch (apiError) {
+        return await localStorageService.getCustomer(supabaseId);
+      }
     } catch (error) {
-      console.error('❌ Error fetching customer from MongoDB:', error);
+      console.error('❌ Error fetching customer:', error);
       throw error;
     }
   }
 
-  static async getCustomerByEmail(email: string): Promise<ICustomer | null> {
+  static async getCustomerByEmail(email: string): Promise<any | null> {
     try {
-      await connectDB();
-      return await Customer.findByEmail(email);
+      // For now, we'll use the supabaseId method as primary lookup
+      // In a full implementation, you'd add email lookup to the API
+      console.warn('Email lookup not implemented in current API, use getCustomerBySupabaseId instead');
+      return null;
     } catch (error) {
-      console.error('❌ Error fetching customer by email from MongoDB:', error);
+      console.error('❌ Error fetching customer by email:', error);
       throw error;
     }
   }
 
-  static async updateCustomer(supabaseId: string, updateData: Partial<ICustomer>): Promise<ICustomer | null> {
+  static async updateCustomer(supabaseId: string, updateData: any): Promise<any | null> {
     try {
-      await connectDB();
-      return await Customer.findOneAndUpdate(
-        { supabaseId },
-        { ...updateData, updatedAt: new Date() },
-        { new: true, runValidators: true }
-      );
+      try {
+        return await mongoAPI.updateCustomer(supabaseId, updateData);
+      } catch (apiError) {
+        console.warn('⚠️ Update via API failed, feature not available in localStorage fallback');
+        return null;
+      }
     } catch (error) {
-      console.error('❌ Error updating customer in MongoDB:', error);
+      console.error('❌ Error updating customer:', error);
       throw error;
     }
   }
 
   static async deleteCustomer(supabaseId: string): Promise<boolean> {
     try {
-      await connectDB();
-      const result = await Customer.findOneAndDelete({ supabaseId });
-      return !!result;
+      try {
+        await mongoAPI.deleteCustomer(supabaseId);
+        return true;
+      } catch (apiError) {
+        console.warn('⚠️ Delete via API failed, feature not available in localStorage fallback');
+        return false;
+      }
     } catch (error) {
-      console.error('❌ Error deleting customer from MongoDB:', error);
+      console.error('❌ Error deleting customer:', error);
       throw error;
     }
   }
@@ -98,138 +91,105 @@ export class DriverService {
     licenseNumber: string;
     vehicleModel: string;
     vehiclePlate: string;
-  }): Promise<IDriver> {
+  }): Promise<any> {
     try {
-      await connectDB();
-      
-      // Parse vehicle model to extract make and model
-      const vehicleParts = driverData.vehicleModel.split(' ');
-      const make = vehicleParts[0] || 'Unknown';
-      const model = vehicleParts.slice(1).join(' ') || 'Unknown';
-
-      const driver = new Driver({
-        supabaseId: driverData.supabaseId,
-        email: driverData.email.toLowerCase(),
-        fullName: driverData.fullName,
-        phone: driverData.phone,
-        licenseNumber: driverData.licenseNumber,
-        vehicleModel: driverData.vehicleModel,
-        vehiclePlate: driverData.vehiclePlate.toUpperCase(),
-        status: 'pending',
-        isAvailable: false,
-        isOnline: false,
-        rating: 0,
-        totalRides: 0,
-        totalEarnings: 0,
-        vehicle: {
-          make: make,
-          model: model,
-          year: new Date().getFullYear(), // Default to current year
-          color: 'Unknown',
-          plateNumber: driverData.vehiclePlate.toUpperCase(),
-          type: 'sedan',
-          capacity: 4
-        },
-        location: {
-          type: 'Point',
-          coordinates: [0, 0], // Default coordinates
-          lastUpdated: new Date()
-        }
-      });
-
-      const savedDriver = await driver.save();
-      console.log('✅ Driver saved to MongoDB:', savedDriver._id);
-      return savedDriver;
+      // Try to use MongoDB API first
+      try {
+        const result = await mongoAPI.createDriver(driverData);
+        console.log('✅ Driver saved to MongoDB via API:', result._id);
+        return result;
+      } catch (apiError) {
+        console.warn('⚠️ MongoDB API not available, using localStorage fallback');
+        // Fallback to localStorage
+        const result = await localStorageService.createDriver(driverData);
+        return result;
+      }
     } catch (error) {
-      console.error('❌ Error creating driver in MongoDB:', error);
+      console.error('❌ Error creating driver:', error);
       throw error;
     }
   }
 
-  static async getDriverBySupabaseId(supabaseId: string): Promise<IDriver | null> {
+  static async getDriverBySupabaseId(supabaseId: string): Promise<any | null> {
     try {
-      await connectDB();
-      return await Driver.findBySupabaseId(supabaseId);
+      try {
+        return await mongoAPI.getDriver(supabaseId);
+      } catch (apiError) {
+        return await localStorageService.getDriver(supabaseId);
+      }
     } catch (error) {
-      console.error('❌ Error fetching driver from MongoDB:', error);
+      console.error('❌ Error fetching driver:', error);
       throw error;
     }
   }
 
-  static async getDriverByEmail(email: string): Promise<IDriver | null> {
+  static async getDriverByEmail(email: string): Promise<any | null> {
     try {
-      await connectDB();
-      return await Driver.findByEmail(email);
+      console.warn('Email lookup not implemented in current API, use getDriverBySupabaseId instead');
+      return null;
     } catch (error) {
-      console.error('❌ Error fetching driver by email from MongoDB:', error);
+      console.error('❌ Error fetching driver by email:', error);
       throw error;
     }
   }
 
-  static async updateDriver(supabaseId: string, updateData: Partial<IDriver>): Promise<IDriver | null> {
+  static async updateDriver(supabaseId: string, updateData: any): Promise<any | null> {
     try {
-      await connectDB();
-      return await Driver.findOneAndUpdate(
-        { supabaseId },
-        { ...updateData, updatedAt: new Date() },
-        { new: true, runValidators: true }
-      );
+      try {
+        return await mongoAPI.updateDriver(supabaseId, updateData);
+      } catch (apiError) {
+        console.warn('⚠️ Update via API failed, feature not available in localStorage fallback');
+        return null;
+      }
     } catch (error) {
-      console.error('❌ Error updating driver in MongoDB:', error);
+      console.error('❌ Error updating driver:', error);
       throw error;
     }
   }
 
   static async deleteDriver(supabaseId: string): Promise<boolean> {
     try {
-      await connectDB();
-      const result = await Driver.findOneAndDelete({ supabaseId });
-      return !!result;
+      try {
+        await mongoAPI.deleteDriver(supabaseId);
+        return true;
+      } catch (apiError) {
+        console.warn('⚠️ Delete via API failed, feature not available in localStorage fallback');
+        return false;
+      }
     } catch (error) {
-      console.error('❌ Error deleting driver from MongoDB:', error);
+      console.error('❌ Error deleting driver:', error);
       throw error;
     }
   }
 
-  static async getAvailableDrivers(coordinates: [number, number], maxDistance: number = 5000): Promise<IDriver[]> {
+  static async getAvailableDrivers(coordinates: [number, number], maxDistance: number = 5000): Promise<any[]> {
     try {
-      await connectDB();
-      return await Driver.findAvailableDrivers(coordinates, maxDistance);
+      console.warn('⚠️ getAvailableDrivers not implemented in current API');
+      return [];
     } catch (error) {
-      console.error('❌ Error fetching available drivers from MongoDB:', error);
+      console.error('❌ Error fetching available drivers:', error);
       throw error;
     }
   }
 
-  static async approveDriver(supabaseId: string): Promise<IDriver | null> {
+  static async approveDriver(supabaseId: string): Promise<any | null> {
     try {
-      await connectDB();
-      return await Driver.findOneAndUpdate(
-        { supabaseId },
-        { status: 'approved', updatedAt: new Date() },
-        { new: true }
-      );
+      return await this.updateDriver(supabaseId, { status: 'approved' });
     } catch (error) {
-      console.error('❌ Error approving driver in MongoDB:', error);
+      console.error('❌ Error approving driver:', error);
       throw error;
     }
   }
 
-  static async suspendDriver(supabaseId: string): Promise<IDriver | null> {
+  static async suspendDriver(supabaseId: string): Promise<any | null> {
     try {
-      await connectDB();
-      return await Driver.findOneAndUpdate(
-        { supabaseId },
-        { 
-          status: 'suspended', 
-          isAvailable: false, 
-          isOnline: false,
-          updatedAt: new Date() 
-        },
-        { new: true }
-      );
+      return await this.updateDriver(supabaseId, { 
+        status: 'suspended', 
+        isAvailable: false, 
+        isOnline: false 
+      });
     } catch (error) {
-      console.error('❌ Error suspending driver in MongoDB:', error);
+      console.error('❌ Error suspending driver:', error);
       throw error;
     }
   }
@@ -239,9 +199,14 @@ export class DriverService {
 export class MongoService {
   static async testConnection(): Promise<boolean> {
     try {
-      await connectDB();
-      console.log('✅ MongoDB connection test successful');
-      return true;
+      const result = await mongoAPI.testConnection();
+      if (result.connected !== false) {
+        console.log('✅ MongoDB API connection test successful');
+        return true;
+      } else {
+        console.log('⚠️ MongoDB API not available, using localStorage fallback');
+        return false;
+      }
     } catch (error) {
       console.error('❌ MongoDB connection test failed:', error);
       return false;
@@ -255,23 +220,19 @@ export class MongoService {
     pendingDrivers: number;
   }> {
     try {
-      await connectDB();
-      
-      const [totalCustomers, totalDrivers, approvedDrivers, pendingDrivers] = await Promise.all([
-        Customer.countDocuments(),
-        Driver.countDocuments(),
-        Driver.countDocuments({ status: 'approved' }),
-        Driver.countDocuments({ status: 'pending' })
-      ]);
-
-      return {
-        totalCustomers,
-        totalDrivers,
-        approvedDrivers,
-        pendingDrivers
-      };
+      try {
+        return await mongoAPI.getStats();
+      } catch (apiError) {
+        console.warn('⚠️ Stats API not available, returning default values');
+        return {
+          totalCustomers: 0,
+          totalDrivers: 0,
+          approvedDrivers: 0,
+          pendingDrivers: 0
+        };
+      }
     } catch (error) {
-      console.error('❌ Error fetching MongoDB stats:', error);
+      console.error('❌ Error fetching stats:', error);
       throw error;
     }
   }
