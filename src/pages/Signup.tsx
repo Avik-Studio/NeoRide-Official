@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Checkbox } from '@/components/ui/checkbox'
 import { useToast } from '@/hooks/use-toast'
 import { supabase } from '@/lib/supabase'
+import { CustomerService, DriverService } from '@/services/mongoService'
 import { Car, User, Eye, EyeOff } from 'lucide-react'
 
 export default function Signup() {
@@ -103,61 +104,81 @@ export default function Signup() {
         return
       }
 
-      // If auth user was created successfully, save additional data to database
+      // If auth user was created successfully, save data to MongoDB
       if (authData.user) {
         try {
           if (role === 'customer') {
-            // Insert customer data
-            const { error: customerError } = await supabase
-              .from('customers')
-              .insert({
-                id: authData.user.id,
-                email: data.email,
-                full_name: data.name,
-                phone: data.phone,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
-              })
+            // Save customer data to MongoDB
+            await CustomerService.createCustomer({
+              supabaseId: authData.user.id,
+              email: data.email,
+              fullName: data.name,
+              phone: data.phone
+            });
+            console.log('✅ Customer data saved to MongoDB successfully');
 
-            if (customerError) {
-              console.error('Customer data insertion error:', customerError)
-              toast({
-                title: 'Warning',
-                description: 'Account created but some profile data may not have been saved.',
-                variant: 'destructive',
-              })
+            // Also save to Supabase for backup/compatibility (if tables exist)
+            try {
+              const { error: customerError } = await supabase
+                .from('customers')
+                .insert({
+                  id: authData.user.id,
+                  email: data.email,
+                  full_name: data.name,
+                  phone: data.phone,
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString()
+                })
+
+              if (customerError) {
+                console.warn('Supabase customer data insertion warning:', customerError)
+              }
+            } catch (supabaseError) {
+              console.warn('Supabase tables may not exist yet:', supabaseError)
             }
-          } else if (role === 'driver') {
-            // Insert driver data
-            const { error: driverError } = await supabase
-              .from('drivers')
-              .insert({
-                id: authData.user.id,
-                email: data.email,
-                full_name: data.name,
-                phone: data.phone,
-                license_number: driverData.licenseNumber,
-                vehicle_model: driverData.vehicleModel,
-                vehicle_plate: driverData.vehiclePlate,
-                status: 'pending', // Default status for new drivers
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
-              })
 
-            if (driverError) {
-              console.error('Driver data insertion error:', driverError)
-              toast({
-                title: 'Warning',
-                description: 'Account created but some profile data may not have been saved.',
-                variant: 'destructive',
-              })
+          } else if (role === 'driver') {
+            // Save driver data to MongoDB
+            await DriverService.createDriver({
+              supabaseId: authData.user.id,
+              email: data.email,
+              fullName: data.name,
+              phone: data.phone,
+              licenseNumber: driverData.licenseNumber,
+              vehicleModel: driverData.vehicleModel,
+              vehiclePlate: driverData.vehiclePlate
+            });
+            console.log('✅ Driver data saved to MongoDB successfully');
+
+            // Also save to Supabase for backup/compatibility (if tables exist)
+            try {
+              const { error: driverError } = await supabase
+                .from('drivers')
+                .insert({
+                  id: authData.user.id,
+                  email: data.email,
+                  full_name: data.name,
+                  phone: data.phone,
+                  license_number: driverData.licenseNumber,
+                  vehicle_model: driverData.vehicleModel,
+                  vehicle_plate: driverData.vehiclePlate,
+                  status: 'pending',
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString()
+                })
+
+              if (driverError) {
+                console.warn('Supabase driver data insertion warning:', driverError)
+              }
+            } catch (supabaseError) {
+              console.warn('Supabase tables may not exist yet:', supabaseError)
             }
           }
-        } catch (dbError) {
-          console.error('Database insertion error:', dbError)
+        } catch (mongoError) {
+          console.error('MongoDB insertion error:', mongoError)
           toast({
             title: 'Warning',
-            description: 'Account created but profile data may not have been saved completely.',
+            description: 'Account created but some profile data may not have been saved to database.',
             variant: 'destructive',
           })
         }
@@ -173,7 +194,7 @@ export default function Signup() {
         } else {
           toast({
             title: 'Account Created! ✅',
-            description: `${role} account created successfully!`,
+            description: `${role} account created successfully and saved to database!`,
           })
         }
         navigate('/login')
