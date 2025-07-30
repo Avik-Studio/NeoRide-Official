@@ -78,7 +78,8 @@ export default function Signup() {
     }
 
     try {
-      const { data: authData, error } = await supabase.auth.signUp({
+      // First, create the auth user
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
@@ -87,28 +88,84 @@ export default function Signup() {
             full_name: data.name,
             phone: data.phone,
             role: role,
-            ...(role === 'driver' && {
-              license_number: driverData.licenseNumber,
-              vehicle_model: driverData.vehicleModel,
-              vehicle_plate: driverData.vehiclePlate,
-            }),
           },
         },
       })
 
-      console.log('Signup response:', { authData, error }) // Debug log
+      console.log('Signup response:', { authData, authError }) // Debug log
 
-      if (error) {
+      if (authError) {
         toast({
           title: 'Signup Error',
-          description: error.message,
+          description: authError.message,
           variant: 'destructive',
         })
-      } else {
+        return
+      }
+
+      // If auth user was created successfully, save additional data to database
+      if (authData.user) {
+        try {
+          if (role === 'customer') {
+            // Insert customer data
+            const { error: customerError } = await supabase
+              .from('customers')
+              .insert({
+                id: authData.user.id,
+                email: data.email,
+                full_name: data.name,
+                phone: data.phone,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              })
+
+            if (customerError) {
+              console.error('Customer data insertion error:', customerError)
+              toast({
+                title: 'Warning',
+                description: 'Account created but some profile data may not have been saved.',
+                variant: 'destructive',
+              })
+            }
+          } else if (role === 'driver') {
+            // Insert driver data
+            const { error: driverError } = await supabase
+              .from('drivers')
+              .insert({
+                id: authData.user.id,
+                email: data.email,
+                full_name: data.name,
+                phone: data.phone,
+                license_number: driverData.licenseNumber,
+                vehicle_model: driverData.vehicleModel,
+                vehicle_plate: driverData.vehiclePlate,
+                status: 'pending', // Default status for new drivers
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              })
+
+            if (driverError) {
+              console.error('Driver data insertion error:', driverError)
+              toast({
+                title: 'Warning',
+                description: 'Account created but some profile data may not have been saved.',
+                variant: 'destructive',
+              })
+            }
+          }
+        } catch (dbError) {
+          console.error('Database insertion error:', dbError)
+          toast({
+            title: 'Warning',
+            description: 'Account created but profile data may not have been saved completely.',
+            variant: 'destructive',
+          })
+        }
+
         // Store user type for when they verify and login
         localStorage.setItem('pendingUserType', role)
         
-        if (authData.user && !authData.user.email_confirmed_at) {
+        if (!authData.user.email_confirmed_at) {
           toast({
             title: 'Check Your Email! 📧',
             description: `We've sent a confirmation email to ${data.email}. Please click the link in the email to verify your account. Check your spam folder if you don't see it.`,
