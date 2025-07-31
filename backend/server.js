@@ -7,21 +7,38 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
+// ========== Middleware ==========
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// MongoDB Connection
+// ========== MongoDB Setup ==========
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/NeoRide';
 
+// (Optional but recommended) Disable command buffering to catch issues early
+mongoose.set('bufferCommands', false);
+
+// MongoDB Connection
 mongoose.connect(MONGODB_URI)
-.then(() => {
-  console.log('✅ Connected to MongoDB');
-})
-.catch((error) => {
-  console.error('❌ MongoDB connection error:', error);
+  .then(() => {
+    console.log('✅ Connected to MongoDB');
+
+    // Start the server only after DB is connected
+    app.listen(PORT, () => {
+      console.log(`🚀 NeoRide Backend API running on port ${PORT}`);
+      console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+    });
+  })
+  .catch((error) => {
+    console.error('❌ MongoDB connection error:', error);
+  });
+
+// Mongoose error listener
+mongoose.connection.on('error', (err) => {
+  console.error('❌ Mongoose runtime error:', err);
 });
+
+// ========== Schemas & Models ==========
 
 // Customer Schema
 const customerSchema = new mongoose.Schema({
@@ -59,6 +76,8 @@ const customerSchema = new mongoose.Schema({
   averageRating: { type: Number, default: 0 }
 }, { timestamps: true });
 
+const Customer = mongoose.model('Customer', customerSchema);
+
 // Driver Schema
 const driverSchema = new mongoose.Schema({
   supabaseId: { type: String, required: true, unique: true },
@@ -70,10 +89,10 @@ const driverSchema = new mongoose.Schema({
   vehiclePlate: { type: String, required: true, unique: true },
   profileImageUrl: String,
   vehicleImageUrl: String,
-  status: { 
-    type: String, 
-    enum: ['pending', 'approved', 'suspended', 'rejected'], 
-    default: 'pending' 
+  status: {
+    type: String,
+    enum: ['pending', 'approved', 'suspended', 'rejected'],
+    default: 'pending'
   },
   isAvailable: { type: Boolean, default: false },
   isOnline: { type: Boolean, default: false },
@@ -120,24 +139,21 @@ const driverSchema = new mongoose.Schema({
   }]
 }, { timestamps: true });
 
-// Create indexes
 driverSchema.index({ location: '2dsphere' });
-
-const Customer = mongoose.model('Customer', customerSchema);
 const Driver = mongoose.model('Driver', driverSchema);
 
-// Routes
+// ========== Routes ==========
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    connected: true, 
+  res.json({
+    connected: true,
     message: 'MongoDB API is running',
     timestamp: new Date().toISOString()
   });
 });
 
-// Customer routes
+// Create Customer
 app.post('/api/customers', async (req, res) => {
   try {
     const customerData = {
@@ -148,17 +164,14 @@ app.post('/api/customers', async (req, res) => {
         smsAlerts: true,
         emailUpdates: true
       },
-      paymentMethods: [{
-        type: 'cash',
-        isDefault: true
-      }],
+      paymentMethods: [{ type: 'cash', isDefault: true }],
       totalRides: 0,
       averageRating: 0
     };
 
     const customer = new Customer(customerData);
     const savedCustomer = await customer.save();
-    
+
     console.log('✅ Customer created:', savedCustomer._id);
     res.status(201).json(savedCustomer);
   } catch (error) {
@@ -167,15 +180,13 @@ app.post('/api/customers', async (req, res) => {
   }
 });
 
+// Customer Read / Update / Delete
 app.get('/api/customers/:supabaseId', async (req, res) => {
   try {
     const customer = await Customer.findOne({ supabaseId: req.params.supabaseId });
-    if (!customer) {
-      return res.status(404).json({ error: 'Customer not found' });
-    }
+    if (!customer) return res.status(404).json({ error: 'Customer not found' });
     res.json(customer);
   } catch (error) {
-    console.error('❌ Error fetching customer:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -187,12 +198,9 @@ app.put('/api/customers/:supabaseId', async (req, res) => {
       { ...req.body, updatedAt: new Date() },
       { new: true, runValidators: true }
     );
-    if (!customer) {
-      return res.status(404).json({ error: 'Customer not found' });
-    }
+    if (!customer) return res.status(404).json({ error: 'Customer not found' });
     res.json(customer);
   } catch (error) {
-    console.error('❌ Error updating customer:', error);
     res.status(400).json({ error: error.message });
   }
 });
@@ -200,17 +208,14 @@ app.put('/api/customers/:supabaseId', async (req, res) => {
 app.delete('/api/customers/:supabaseId', async (req, res) => {
   try {
     const customer = await Customer.findOneAndDelete({ supabaseId: req.params.supabaseId });
-    if (!customer) {
-      return res.status(404).json({ error: 'Customer not found' });
-    }
+    if (!customer) return res.status(404).json({ error: 'Customer not found' });
     res.json({ message: 'Customer deleted successfully' });
   } catch (error) {
-    console.error('❌ Error deleting customer:', error);
     res.status(500).json({ error: error.message });
   }
 });
 
-// Driver routes
+// Create Driver
 app.post('/api/drivers', async (req, res) => {
   try {
     const vehicleParts = req.body.vehicleModel.split(' ');
@@ -228,8 +233,8 @@ app.post('/api/drivers', async (req, res) => {
       totalRides: 0,
       totalEarnings: 0,
       vehicle: {
-        make: make,
-        model: model,
+        make,
+        model,
         year: new Date().getFullYear(),
         color: 'Unknown',
         plateNumber: req.body.vehiclePlate.toUpperCase(),
@@ -254,24 +259,21 @@ app.post('/api/drivers', async (req, res) => {
 
     const driver = new Driver(driverData);
     const savedDriver = await driver.save();
-    
+
     console.log('✅ Driver created:', savedDriver._id);
     res.status(201).json(savedDriver);
   } catch (error) {
-    console.error('❌ Error creating driver:', error);
     res.status(400).json({ error: error.message });
   }
 });
 
+// Driver Read / Update / Delete
 app.get('/api/drivers/:supabaseId', async (req, res) => {
   try {
     const driver = await Driver.findOne({ supabaseId: req.params.supabaseId });
-    if (!driver) {
-      return res.status(404).json({ error: 'Driver not found' });
-    }
+    if (!driver) return res.status(404).json({ error: 'Driver not found' });
     res.json(driver);
   } catch (error) {
-    console.error('❌ Error fetching driver:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -283,12 +285,9 @@ app.put('/api/drivers/:supabaseId', async (req, res) => {
       { ...req.body, updatedAt: new Date() },
       { new: true, runValidators: true }
     );
-    if (!driver) {
-      return res.status(404).json({ error: 'Driver not found' });
-    }
+    if (!driver) return res.status(404).json({ error: 'Driver not found' });
     res.json(driver);
   } catch (error) {
-    console.error('❌ Error updating driver:', error);
     res.status(400).json({ error: error.message });
   }
 });
@@ -296,17 +295,14 @@ app.put('/api/drivers/:supabaseId', async (req, res) => {
 app.delete('/api/drivers/:supabaseId', async (req, res) => {
   try {
     const driver = await Driver.findOneAndDelete({ supabaseId: req.params.supabaseId });
-    if (!driver) {
-      return res.status(404).json({ error: 'Driver not found' });
-    }
+    if (!driver) return res.status(404).json({ error: 'Driver not found' });
     res.json({ message: 'Driver deleted successfully' });
   } catch (error) {
-    console.error('❌ Error deleting driver:', error);
     res.status(500).json({ error: error.message });
   }
 });
 
-// Stats route
+// Stats Route
 app.get('/api/stats', async (req, res) => {
   try {
     const [totalCustomers, totalDrivers, approvedDrivers, pendingDrivers] = await Promise.all([
@@ -316,31 +312,19 @@ app.get('/api/stats', async (req, res) => {
       Driver.countDocuments({ status: 'pending' })
     ]);
 
-    res.json({
-      totalCustomers,
-      totalDrivers,
-      approvedDrivers,
-      pendingDrivers
-    });
+    res.json({ totalCustomers, totalDrivers, approvedDrivers, pendingDrivers });
   } catch (error) {
-    console.error('❌ Error fetching stats:', error);
     res.status(500).json({ error: error.message });
   }
 });
 
-// Error handling middleware
+// Global Error Handler
 app.use((err, req, res, next) => {
   console.error('❌ Server error:', err);
   res.status(500).json({ error: 'Internal server error' });
 });
 
-// 404 handler
+// 404 Fallback
 app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' });
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 NeoRide Backend API running on port ${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
 });
