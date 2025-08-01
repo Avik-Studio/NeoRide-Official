@@ -5,7 +5,7 @@ import { Car, DollarSign, Star, Users, Calendar, MapPin, Clock } from 'lucide-re
 const DriverDashboard: React.FC = () => {
   const stats = [
     { icon: Car, label: 'Total Rides', value: '247', color: 'text-blue-500' },
-    { icon: DollarSign, label: 'Earnings', value: '$3,450', color: 'text-green-500' },
+    { icon: DollarSign, label: 'Earnings', value: '₹2,58,750', color: 'text-green-500' },
     { icon: Star, label: 'Rating', value: '4.9', color: 'text-yellow-500' },
     { icon: Users, label: 'Happy Customers', value: '189', color: 'text-purple-500' }
   ];
@@ -13,18 +13,18 @@ const DriverDashboard: React.FC = () => {
   const recentRides = [
     {
       id: '1',
-      customer: 'John Smith',
-      destination: 'Airport',
+      customer: 'Rajesh Gupta',
+      destination: 'Netaji Subhash Airport',
       date: '2024-01-15',
-      amount: 45,
+      amount: 450,
       status: 'completed'
     },
     {
       id: '2',
-      customer: 'Sarah Johnson',
-      destination: 'Downtown',
+      customer: 'Anita Roy',
+      destination: 'Park Street',
       date: '2024-01-14',
-      amount: 28,
+      amount: 280,
       status: 'completed'
     }
   ];
@@ -99,7 +99,7 @@ const DriverDashboard: React.FC = () => {
                 
                 <div className="text-right">
                   <div className="text-lg font-bold text-gray-800 dark:text-white">
-                    ${ride.amount}
+                    ₹{ride.amount}
                   </div>
                   <span className="text-sm px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300">
                     {ride.status}

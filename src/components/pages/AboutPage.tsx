@@ -88,18 +88,18 @@ const AboutPage: React.FC = () => {
   ];
 
   const milestones = [
-    { year: '2020', title: 'Company Founded', description: 'Started with a vision to revolutionize travel booking' },
-    { year: '2021', title: 'First 1,000 Users', description: 'Reached our first milestone of happy travelers' },
-    { year: '2022', title: 'Global Expansion', description: 'Expanded to 50+ destinations worldwide' },
-    { year: '2023', title: '50K+ Travelers', description: 'Served over 50,000 satisfied customers' },
-    { year: '2024', title: 'AI Integration', description: 'Launched AI-powered travel recommendations' }
+    { year: '2020', title: 'Company Founded', description: 'Started with a vision to revolutionize travel booking in India' },
+    { year: '2021', title: 'First 1,000 Users', description: 'Reached our first milestone of happy travelers in West Bengal' },
+    { year: '2022', title: 'Regional Expansion', description: 'Expanded to 50+ destinations across Eastern India' },
+    { year: '2023', title: '50K+ Travelers', description: 'Served over 50,000 satisfied customers across India' },
+    { year: '2024', title: 'AI Integration', description: 'Launched AI-powered travel recommendations for Indian destinations' }
   ];
 
   const achievements = [
     { icon: Star, title: 'Best Travel App 2023', org: 'Travel Tech Awards' },
-    { icon: Award, title: 'Customer Choice Award', org: 'TripAdvisor' },
-    { icon: TrendingUp, title: 'Fastest Growing Startup', org: 'Tech Crunch' },
-    { icon: Shield, title: 'Security Excellence', org: 'Cyber Security Institute' }
+    { icon: Award, title: 'Customer Choice Award', org: 'TripAdvisor India' },
+    { icon: TrendingUp, title: 'Fastest Growing Startup', org: 'Startup India' },
+    { icon: Shield, title: 'Security Excellence', org: 'Indian Cyber Security Institute' }
   ];
 
   return (
@@ -155,23 +155,23 @@ const AboutPage: React.FC = () => {
                 Our Story
               </h2>
               <p className="text-gray-600 dark:text-gray-300 mb-4">
-                Founded in 2020, Neoride began with a simple vision: to make travel accessible, 
-                enjoyable, and stress-free for everyone. What started as a small team with big 
-                dreams has grown into a trusted platform serving thousands of travelers worldwide.
+                Founded in 2020 in Kolkata, Neoride began with a simple vision: to make travel accessible, 
+                enjoyable, and stress-free for everyone in India. What started as a small team with big 
+                dreams has grown into a trusted platform serving thousands of travelers across India.
               </p>
               <p className="text-gray-600 dark:text-gray-300 mb-4">
-                We believe that travel has the power to transform lives, create memories, and 
-                build connections. That's why we're committed to providing not just transportation 
-                and accommodation, but complete travel experiences.
+                We believe that India's rich cultural heritage and natural beauty should be accessible to all. 
+                From the tea gardens of Darjeeling to the mangroves of Sundarbans, we're committed to 
+                showcasing the best of West Bengal and Eastern India.
               </p>
               <p className="text-gray-600 dark:text-gray-300">
-                Today, we continue to innovate and expand our services, always keeping our 
-                customers at the heart of everything we do.
+                Today, we continue to innovate and expand our services across India, always keeping our 
+                customers at the heart of everything we do, with special focus on promoting local tourism.
               </p>
               <div className="flex space-x-4">
                 <div className="flex items-center space-x-2">
                   <CheckCircle className="h-5 w-5 text-green-500" />
-                  <span className="text-sm text-gray-600 dark:text-gray-300">ISO 27001 Certified</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">Government Approved</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <CheckCircle className="h-5 w-5 text-green-500" />

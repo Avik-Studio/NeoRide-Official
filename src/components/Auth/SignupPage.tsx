@@ -33,11 +33,13 @@ const SignupPage: React.FC = () => {
       return;
     }
 
-    if (signup(formData.email, formData.password, formData.name, formData.role)) {
-      navigate('/home');
-    } else {
-      setError('Failed to create account. Please try again.');
-    }
+    signup(formData.email, formData.password, formData.name, formData.role).then((success) => {
+      if (success) {
+        navigate('/home');
+      } else {
+        setError('Failed to create account. Please try again.');
+      }
+    });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

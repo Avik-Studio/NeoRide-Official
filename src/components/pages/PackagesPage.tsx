@@ -1,55 +1,64 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Star, MapPin, Calendar, Users } from 'lucide-react';
-
+import BookingModal from '../Booking/BookingModal';
 
 const PackagesPage: React.FC = () => {
+  const [bookingModal, setBookingModal] = React.useState<{ isOpen: boolean; package: any | null }>({
+    isOpen: false,
+    package: null
+  });
+
   const packages = [
     {
       id: 1,
-      title: 'Mountain Adventure',
-      destination: 'Swiss Alps',
-      price: 1299,
+      title: 'Darjeeling Hills',
+      destination: 'Darjeeling, West Bengal',
+      price: 15999,
       duration: '7 days',
-      image: 'https://images.pexels.com/photos/3408744/pexels-photo-3408744.jpeg',
+      image: 'https://images.pexels.com/photos/1271619/pexels-photo-1271619.jpeg',
       rating: 4.8,
       reviews: 124,
-      features: ['Guided Tours', 'Mountain Climbing', 'Luxury Hotels', 'All Meals']
+      features: ['Tea Garden Tours', 'Toy Train Ride', 'Hill Station Hotels', 'All Meals']
     },
     {
       id: 2,
-      title: 'Beach Paradise',
-      destination: 'Maldives',
-      price: 2199,
+      title: 'Sundarbans Safari',
+      destination: 'Sundarbans, West Bengal',
+      price: 12999,
       duration: '5 days',
-      image: 'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg',
+      image: 'https://images.pexels.com/photos/3889855/pexels-photo-3889855.jpeg',
       rating: 4.9,
       reviews: 89,
-      features: ['Water Sports', 'Spa Treatment', 'Private Beach', 'Premium Dining']
+      features: ['Mangrove Safari', 'Tiger Spotting', 'Boat Rides', 'Local Cuisine']
     },
     {
       id: 3,
-      title: 'City Explorer',
-      destination: 'Tokyo',
-      price: 899,
+      title: 'Kolkata Heritage',
+      destination: 'Kolkata, West Bengal',
+      price: 8999,
       duration: '6 days',
-      image: 'https://images.pexels.com/photos/2506923/pexels-photo-2506923.jpeg',
+      image: 'https://images.pexels.com/photos/3889742/pexels-photo-3889742.jpeg',
       rating: 4.7,
       reviews: 156,
-      features: ['Cultural Tours', 'Food Experience', 'Modern Hotels', 'Shopping Guide']
+      features: ['Victoria Memorial', 'Howrah Bridge', 'Street Food Tours', 'Cultural Heritage']
     },
     {
       id: 4,
-      title: 'Desert Safari',
-      destination: 'Dubai',
-      price: 1599,
+      title: 'Digha Beach',
+      destination: 'Digha, West Bengal',
+      price: 6999,
       duration: '4 days',
-      image: 'https://images.pexels.com/photos/3244513/pexels-photo-3244513.jpeg',
+      image: 'https://images.pexels.com/photos/1287460/pexels-photo-1287460.jpeg',
       rating: 4.6,
       reviews: 78,
-      features: ['Desert Adventures', 'Luxury Resorts', 'Camel Riding', 'Traditional Cuisine']
+      features: ['Beach Activities', 'Sea Food', 'Beach Resorts', 'Water Sports']
     }
   ];
+
+  const handleBookPackage = (pkg: any) => {
+    setBookingModal({ isOpen: true, package: pkg });
+  };
 
   return (
     <div className="min-h-screen pt-16">
@@ -112,7 +121,7 @@ const PackagesPage: React.FC = () => {
                   </h3>
                   <div className="text-right">
                     <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                      ${pkg.price}
+                      ₹{pkg.price}
                     </div>
                     <div className="text-sm text-gray-500 dark:text-gray-400">
                       per person
@@ -147,6 +156,7 @@ const PackagesPage: React.FC = () => {
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
+                    onClick={() => handleBookPackage(pkg)}
                     className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all duration-300"
                   >
                     Book Now
@@ -164,6 +174,13 @@ const PackagesPage: React.FC = () => {
           ))}
         </div>
       </motion.section>
+
+      {/* Booking Modal */}
+      <BookingModal
+        isOpen={bookingModal.isOpen}
+        onClose={() => setBookingModal({ isOpen: false, package: null })}
+        package={bookingModal.package}
+      />
     </div>
   );
 };

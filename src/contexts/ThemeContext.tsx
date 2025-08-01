@@ -16,12 +16,16 @@ export const useTheme = () => {
 };
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true); // Default to dark theme
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('neoride_theme');
     if (savedTheme) {
       setIsDark(savedTheme === 'dark');
+    } else {
+      // Set default to dark theme
+      setIsDark(true);
+      localStorage.setItem('neoride_theme', 'dark');
     }
   }, []);
 

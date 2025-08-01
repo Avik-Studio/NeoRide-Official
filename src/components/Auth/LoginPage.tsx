@@ -16,11 +16,13 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setError('');
 
-    if (login(email, password)) {
-      navigate('/home');
-    } else {
-      setError('Invalid credentials. Password must be at least 6 characters.');
-    }
+    login(email, password).then((success) => {
+      if (success) {
+        navigate('/home');
+      } else {
+        setError('Invalid credentials. Password must be at least 6 characters.');
+      }
+    });
   };
 
   return (

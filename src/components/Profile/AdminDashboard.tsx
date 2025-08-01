@@ -7,14 +7,14 @@ const AdminDashboard: React.FC = () => {
     { icon: Users, label: 'Total Users', value: '2,847', change: '+12%', color: 'text-blue-500' },
     { icon: Car, label: 'Active Drivers', value: '156', change: '+8%', color: 'text-green-500' },
     { icon: Package, label: 'Bookings Today', value: '47', change: '+23%', color: 'text-orange-500' },
-    { icon: DollarSign, label: 'Revenue', value: '$24,578', change: '+15%', color: 'text-purple-500' }
+    { icon: DollarSign, label: 'Revenue', value: '₹18,45,780', change: '+15%', color: 'text-purple-500' }
   ];
 
   const recentActivity = [
-    { type: 'booking', user: 'John Doe', action: 'booked Swiss Alps package', time: '2 min ago' },
-    { type: 'driver', user: 'Mike Johnson', action: 'completed ride to airport', time: '5 min ago' },
-    { type: 'user', user: 'Sarah Smith', action: 'signed up as customer', time: '10 min ago' },
-    { type: 'booking', user: 'Alex Brown', action: 'cancelled Maldives booking', time: '15 min ago' }
+    { type: 'booking', user: 'Rahul Sharma', action: 'booked Darjeeling Hills package', time: '2 min ago' },
+    { type: 'driver', user: 'Amit Kumar', action: 'completed ride to Netaji Subhash Airport', time: '5 min ago' },
+    { type: 'user', user: 'Priya Das', action: 'signed up as customer', time: '10 min ago' },
+    { type: 'booking', user: 'Sourav Ghosh', action: 'cancelled Sundarbans booking', time: '15 min ago' }
   ];
 
   return (
@@ -140,7 +140,7 @@ const AdminDashboard: React.FC = () => {
         <div className="grid md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <h3 className="font-semibold text-gray-800 dark:text-white">Popular Destinations</h3>
-            {['Swiss Alps', 'Maldives', 'Tokyo', 'Paris'].map((dest, index) => (
+            {['Darjeeling', 'Sundarbans', 'Kolkata', 'Digha'].map((dest, index) => (
               <div key={index} className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <MapPin className="h-4 w-4 text-blue-500" />

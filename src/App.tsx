@@ -4,14 +4,15 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import Navbar from './components/Layout/Navbar';
 import AnimatedBackground from './components/Layout/AnimatedBackground';
+import LandingPage from './components/Home/LandingPage';
 import LoginPage from './components/Auth/LoginPage';
 import SignupPage from './components/Auth/SignupPage';
 import HomePage from './components/Home/HomePage';
 import ProfilePage from './components/Profile/ProfilePage';
-import PackagesPage from './components/Pages/PackagesPage';
-import RidesPage from './components/Pages/RidesPage';
-import AboutPage from './components/Pages/AboutPage';
-import ContactPage from './components/Pages/ContactPage';
+import PackagesPage from './components/pages/PackagesPage';
+import RidesPage from './components/pages/RidesPage';
+import AboutPage from './components/pages/AboutPage';
+import ContactPage from './components/pages/ContactPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -24,11 +25,15 @@ const AppContent: React.FC = () => {
   return (
     <div className="relative min-h-screen">
       <AnimatedBackground />
-      {isAuthenticated && <Navbar />}
+      <Navbar />
       
       <Routes>
         <Route 
           path="/" 
+          element={<LandingPage />} 
+        />
+        <Route 
+          path="/login" 
           element={
             isAuthenticated ? <Navigate to="/home" /> : <LoginPage />
           } 

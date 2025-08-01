@@ -6,18 +6,18 @@ const CustomerDashboard: React.FC = () => {
   const bookings = [
     {
       id: '1',
-      destination: 'Swiss Alps',
+      destination: 'Darjeeling Hills',
       date: '2024-02-15',
       status: 'confirmed',
-      amount: 1299,
+      amount: 15999,
       tier: 'Luxury'
     },
     {
       id: '2',
-      destination: 'Maldives',
+      destination: 'Sundarbans',
       date: '2024-03-20',
       status: 'pending',
-      amount: 2199,
+      amount: 12999,
       tier: 'Medium'
     }
   ];
@@ -98,7 +98,7 @@ const CustomerDashboard: React.FC = () => {
                 
                 <div className="text-right">
                   <div className="text-lg font-bold text-gray-800 dark:text-white">
-                    ${booking.amount}
+                    ₹{booking.amount}
                   </div>
                   <span className={`text-sm px-2 py-1 rounded-full ${
                     booking.status === 'confirmed' 

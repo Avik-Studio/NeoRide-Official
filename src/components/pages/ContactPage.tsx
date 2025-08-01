@@ -50,15 +50,15 @@ const ContactPage: React.FC = () => {
     {
       icon: Phone,
       title: 'Call Us',
-      details: '+1 (555) 123-4567',
-      subDetails: 'Mon-Fri, 9 AM - 6 PM EST',
+      details: '+91 98765 43210',
+      subDetails: 'Mon-Fri, 9 AM - 6 PM IST',
       color: 'bg-green-500'
     },
     {
       icon: MapPin,
       title: 'Visit Us',
-      details: '123 Innovation Drive',
-      subDetails: 'San Francisco, CA 94102',
+      details: '123 Park Street',
+      subDetails: 'Kolkata, West Bengal 700016',
       color: 'bg-purple-500'
     },
     {
@@ -82,14 +82,14 @@ const ContactPage: React.FC = () => {
       icon: Users,
       title: 'Driver Support',
       description: 'Dedicated support for our driver partners',
-      availability: 'Mon-Fri, 8 AM - 8 PM',
+      availability: 'Mon-Fri, 8 AM - 8 PM IST',
       responseTime: '< 1 hour'
     },
     {
       icon: Globe,
       title: 'Business Inquiries',
       description: 'Partnership opportunities and business development',
-      availability: 'Mon-Fri, 9 AM - 6 PM',
+      availability: 'Mon-Fri, 9 AM - 6 PM IST',
       responseTime: '< 24 hours'
     }
   ];
@@ -281,7 +281,7 @@ const ContactPage: React.FC = () => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm text-gray-800 dark:text-white"
-                    placeholder="+1 (555) 123-4567"
+                    placeholder="+91 98765 43210"
                   />
                 </div>
                 

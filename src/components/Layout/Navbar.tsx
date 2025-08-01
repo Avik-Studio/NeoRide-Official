@@ -15,10 +15,13 @@ const Navbar: React.FC = () => {
     navigate('/');
   };
 
-  const navItems = [
+  const navItems = user ? [
     { name: 'Home', path: '/home' },
     { name: 'Packages', path: '/packages' },
     { name: 'Rides', path: '/rides' },
+    { name: 'About Us', path: '/about' },
+    { name: 'Contact', path: '/contact' }
+  ] : [
     { name: 'About Us', path: '/about' },
     { name: 'Contact', path: '/contact' }
   ];
@@ -35,10 +38,12 @@ const Navbar: React.FC = () => {
             whileHover={{ scale: 1.05 }}
             className="flex items-center space-x-2"
           >
-            <Car className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Neoride
-            </span>
+            <Link to="/" className="flex items-center space-x-2">
+              <Car className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Neoride
+              </span>
+            </Link>
           </motion.div>
 
           <div className="hidden md:flex items-center space-x-8">
@@ -85,6 +90,29 @@ const Navbar: React.FC = () => {
                   <LogOut className="h-5 w-5" />
                 </motion.button>
               </>
+            )}
+
+            {!user && (
+              <div className="flex items-center space-x-2">
+                <Link to="/login">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-4 py-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                  >
+                    Login
+                  </motion.button>
+                </Link>
+                <Link to="/signup">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Sign Up
+                  </motion.button>
+                </Link>
+              </div>
             )}
           </div>
         </div>

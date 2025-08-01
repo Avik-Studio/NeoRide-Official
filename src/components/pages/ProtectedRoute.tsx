@@ -1,4 +1,4 @@
-import { useAuth } from '@/hooks/useAuth'
+
 import { Navigate } from 'react-router-dom'
 
 interface ProtectedRouteProps {
@@ -6,7 +6,7 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { user, loading } = useAuth()
+  const { user, loading } = Auth()
 
   if (loading) {
     return (
@@ -21,4 +21,8 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   return <>{children}</>
+}
+
+function Auth(): { user: any; loading: any } {
+  throw new Error('Function not implemented.')
 }
