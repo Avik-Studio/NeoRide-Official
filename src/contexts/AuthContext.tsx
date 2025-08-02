@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import type { User as SupabaseUser } from '@supabase/supabase-js';
+import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
 export type UserRole = 'customer' | 'driver' | 'admin';
 
@@ -33,52 +33,62 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isSupabaseConnected, setIsSupabaseConnected] = useState(false);
 
   useEffect(() => {
-    // Check if Supabase is properly configured
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-    
-    if (supabaseUrl && supabaseKey && 
-        supabaseUrl !== 'https://placeholder.supabase.co' && 
-        supabaseKey !== 'placeholder-anon-key') {
-      setIsSupabaseConnected(true);
-    }
+    // Initialize auth state
+    initializeAuth();
+  }, []);
 
-    // Check for existing session
-    if (isSupabaseConnected) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session?.user) {
-          fetchUserProfile(session.user);
-        }
-        setLoading(false);
-      });
-
-      // Listen for auth changes
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-        if (session?.user) {
-          await fetchUserProfile(session.user);
-        } else {
-          setUser(null);
-        }
-        setLoading(false);
-      });
-
-      return () => subscription.unsubscribe();
-    } else {
-      // Check for local storage user in development mode
-      const localUser = localStorage.getItem('neoride_user');
-      if (localUser) {
-        try {
-          setUser(JSON.parse(localUser));
-        } catch (error) {
-          console.error('Error parsing local user:', error);
-        }
+  const initializeAuth = async () => {
+    try {
+      // Check for existing session
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error) {
+        console.error('Session error:', error);
+        // Fallback to localStorage for development
+        checkLocalStorage();
+        return;
       }
+
+      if (session?.user) {
+        await fetchUserProfile(session.user);
+      } else {
+        checkLocalStorage();
+      }
+    } catch (error) {
+      console.error('Auth initialization error:', error);
+      checkLocalStorage();
+    } finally {
       setLoading(false);
     }
-  }, [isSupabaseConnected]);
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session?.user?.email);
+      
+      if (event === 'SIGNED_IN' && session?.user) {
+        await fetchUserProfile(session.user);
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null);
+        localStorage.removeItem('neoride_user');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  };
+
+  const checkLocalStorage = () => {
+    const localUser = localStorage.getItem('neoride_user');
+    if (localUser) {
+      try {
+        setUser(JSON.parse(localUser));
+      } catch (error) {
+        console.error('Error parsing local user:', error);
+        localStorage.removeItem('neoride_user');
+      }
+    }
+  };
 
   const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
     try {
@@ -91,15 +101,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) throw error;
 
       if (data) {
-        setUser({
+        const userData = {
           id: data.id,
           email: data.email,
           name: data.name,
           role: data.role
-        });
+        };
+        setUser(userData);
+        localStorage.setItem('neoride_user', JSON.stringify(userData));
       }
     } catch (error) {
       console.error('Error fetching user profile:', error);
+      // Create basic user profile if not exists
+      const basicUser = {
+        id: supabaseUser.id,
+        email: supabaseUser.email || '',
+        name: supabaseUser.email?.split('@')[0] || 'User',
+        role: 'customer' as UserRole
+      };
+      setUser(basicUser);
+      localStorage.setItem('neoride_user', JSON.stringify(basicUser));
+    }
+  };
+
+  const createUserProfile = async (userId: string, email: string, name: string, role: UserRole) => {
+    try {
+      const { error } = await supabase
+        .from('users')
+        .insert({
+          id: userId,
+          email,
+          name,
+          role
+        });
+
+      if (error) {
+        console.error('Error creating user profile:', error);
+        // Don't throw error, continue with basic user data
+      }
+    } catch (error) {
+      console.error('Error in createUserProfile:', error);
     }
   };
 
@@ -120,16 +161,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return true;
       }
 
-      if (isSupabaseConnected) {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
+      // Try Supabase authentication
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
 
-        if (error) throw error;
-        return true;
-      } else {
-        // Development mode - simulate login
+      if (error) {
+        console.error('Supabase login error:', error);
+        
+        // Fallback to development mode
         if (password.length >= 6) {
           const mockUser: User = {
             id: `user-${Date.now()}`,
@@ -140,11 +181,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(mockUser);
           localStorage.setItem('neoride_user', JSON.stringify(mockUser));
           return true;
-        } else {
-          throw new Error('Password must be at least 6 characters');
         }
+        return false;
       }
 
+      if (data.user) {
+        // User will be set via onAuthStateChange
+        return true;
+      }
+
+      return false;
     } catch (error) {
       console.error('Login error:', error);
       return false;
@@ -157,29 +203,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
 
-      if (isSupabaseConnected) {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password
-        });
-
-        if (error) throw error;
-
-        if (data.user) {
-          // Create user profile
-          const { error: profileError } = await supabase
-            .from('users')
-            .insert({
-              id: data.user.id,
-              email,
-              name,
-              role
-            });
-
-          if (profileError) throw profileError;
+      // Try Supabase signup
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name,
+            role
+          }
         }
-      } else {
-        // Development mode - simulate signup
+      });
+
+      if (error) {
+        console.error('Supabase signup error:', error);
+        
+        // Fallback to development mode
         if (password.length >= 6) {
           const newUser: User = {
             id: `user-${Date.now()}`,
@@ -189,12 +228,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           };
           setUser(newUser);
           localStorage.setItem('neoride_user', JSON.stringify(newUser));
-        } else {
-          throw new Error('Password must be at least 6 characters');
+          return true;
         }
+        return false;
       }
 
-      return true;
+      if (data.user) {
+        // Create user profile
+        await createUserProfile(data.user.id, email, name, role);
+        
+        // If email confirmation is disabled, user will be logged in immediately
+        if (data.session) {
+          await fetchUserProfile(data.user);
+        }
+        
+        return true;
+      }
+
+      return false;
     } catch (error) {
       console.error('Signup error:', error);
       return false;
@@ -204,12 +255,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = async () => {
-    if (isSupabaseConnected) {
-      await supabase.auth.signOut();
-    } else {
-      localStorage.removeItem('neoride_user');
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Logout error:', error);
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
     }
+    
+    // Always clear local state
     setUser(null);
+    localStorage.removeItem('neoride_user');
   };
 
   if (loading) {

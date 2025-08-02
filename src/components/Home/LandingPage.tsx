@@ -7,34 +7,34 @@ const LandingPage: React.FC = () => {
   const features = [
     {
       icon: Car,
-      title: 'Quick Rides',
-      description: 'Book instant rides across Kolkata and West Bengal for your daily commute',
+      title: 'Instant Rides',
+      description: 'Book rides in seconds across Kolkata with real-time tracking and fair pricing',
       color: 'from-blue-500 to-blue-600'
     },
     {
       icon: Plane,
       title: 'Travel Packages',
-      description: 'Curated travel experiences to amazing destinations across India',
+      description: 'Explore West Bengal with our curated travel packages to Darjeeling, Sundarbans & more',
       color: 'from-purple-500 to-purple-600'
     },
     {
       icon: Shield,
       title: 'Safe & Secure',
-      description: 'Verified drivers and secure payment options for peace of mind',
+      description: 'Government verified drivers, GPS tracking, and secure payments for complete safety',
       color: 'from-green-500 to-green-600'
     },
     {
       icon: Star,
-      title: 'Top Rated',
-      description: '4.9/5 rating from thousands of satisfied customers',
+      title: '4.9★ Rated',
+      description: 'Highest rated ride and travel service in West Bengal with 50K+ happy customers',
       color: 'from-orange-500 to-orange-600'
     }
   ];
 
   const stats = [
     { number: '50K+', label: 'Happy Customers' },
-    { number: '200+', label: 'Indian Destinations' },
-    { number: '1000+', label: 'Daily Rides' },
+    { number: '200+', label: 'Destinations in Bengal' },
+    { number: '2000+', label: 'Daily Rides' },
     { number: '4.9★', label: 'Average Rating' }
   ];
 
@@ -61,11 +61,11 @@ const LandingPage: React.FC = () => {
               </h1>
             </div>
             <p className="text-2xl md:text-3xl font-semibold text-gray-800 dark:text-white mb-4">
-              Your Journey, Our Priority
+              Kolkata's #1 Ride & Travel App
             </p>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Experience seamless travel across India with instant rides and curated travel packages. 
-              From daily commutes in Kolkata to exploring the beauty of West Bengal, we've got you covered.
+              Get instant rides across Kolkata or explore West Bengal's beauty with our travel packages. 
+              Safe, reliable, and affordable - your trusted travel companion in the City of Joy.
             </p>
           </motion.div>
 
@@ -132,13 +132,13 @@ const LandingPage: React.FC = () => {
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-6">
-              Why Choose{' '}
+              Why Kolkata Chooses{' '}
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Neoride?
               </span>
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              We combine the convenience of ride-hailing with the excitement of travel planning
+              The most trusted ride and travel platform in West Bengal, built for locals by locals
             </p>
           </div>
 
@@ -179,10 +179,10 @@ const LandingPage: React.FC = () => {
             <div className="absolute inset-0 bg-black/10"></div>
             <div className="relative z-10 text-white">
               <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                Ready to Start Your Journey?
+                Ready to Explore Kolkata?
               </h2>
               <p className="text-xl mb-8 opacity-90">
-                Join thousands of satisfied customers who trust Neoride for their travel needs
+                Join 50,000+ Kolkatans who trust Neoride for their daily rides and weekend getaways
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/signup">
