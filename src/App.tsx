@@ -18,6 +18,7 @@ import AuthTest from "./pages/AuthTest";
 import TestPage from "./pages/TestPage";
 import AuthCallback from "./pages/AuthCallback";
 import PackagesPage from "./components/Pages/PackagesPage";
+import SignupTest from "./pages/SignupTest";
 
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const App = () => (
           <Route path="/admin-test" element={<AdminLoginTest />} />
           <Route path="/auth-test" element={<AuthTest />} />
           <Route path="/test" element={<TestPage />} />
+          <Route path="/signup-test" element={<SignupTest />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/packages" element={<PackagesPage />} />
           <Route path="/login" element={<Login />} />
