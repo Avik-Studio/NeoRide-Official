@@ -41,20 +41,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const initializeAuth = async () => {
     try {
-      // Check for existing session
-      const { data: { session }, error } = await supabase.auth.getSession();
+      // Check if Supabase is properly configured
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
       
-      if (error) {
-        console.error('Session error:', error);
-        // Fallback to localStorage for development
+      if (!supabaseUrl || !supabaseKey || supabaseUrl.includes('placeholder')) {
+        console.warn('Supabase not configured, using fallback authentication');
         checkLocalStorage();
         return;
       }
 
-      if (session?.user) {
-        await fetchUserProfile(session.user);
-      } else {
+      // Try Supabase authentication
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Session error:', error);
+          checkLocalStorage();
+          return;
+        }
+
+        if (session?.user) {
+          await fetchUserProfile(session.user);
+        } else {
+          checkLocalStorage();
+        }
+      } catch (fetchError) {
+        console.warn('Supabase connection failed, using fallback:', fetchError);
         checkLocalStorage();
+        return;
       }
     } catch (error) {
       console.error('Auth initialization error:', error);
@@ -148,6 +163,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       
+      // Check if Supabase is properly configured
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
       // Check for admin login
       if (email === 'admin@neoride.com' && password === 'admin123') {
         const adminUser: User = {
@@ -161,22 +180,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return true;
       }
 
-      // Try Supabase authentication
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (error) {
-        console.error('Supabase login error:', error);
-        
-        // Fallback to development mode
+      // Use fallback authentication if Supabase not configured
+      if (!supabaseUrl || !supabaseKey || supabaseUrl.includes('placeholder')) {
+        console.warn('Using fallback authentication');
         if (password.length >= 6) {
           const mockUser: User = {
             id: `user-${Date.now()}`,
             email,
             name: email.split('@')[0],
-            role: 'customer'
+            role: email.includes('driver') ? 'driver' : 'customer'
           };
           setUser(mockUser);
           localStorage.setItem('neoride_user', JSON.stringify(mockUser));
@@ -185,12 +197,54 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return false;
       }
 
-      if (data.user) {
-        // User will be set via onAuthStateChange
-        return true;
-      }
+      // Try Supabase authentication
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
 
-      return false;
+        if (error) {
+          console.error('Supabase login error:', error);
+          
+          // Fallback to development mode
+          if (password.length >= 6) {
+            const mockUser: User = {
+              id: `user-${Date.now()}`,
+              email,
+              name: email.split('@')[0],
+              role: email.includes('driver') ? 'driver' : 'customer'
+            };
+            setUser(mockUser);
+            localStorage.setItem('neoride_user', JSON.stringify(mockUser));
+            return true;
+          }
+          return false;
+        }
+
+        if (data.user) {
+          // User will be set via onAuthStateChange
+          return true;
+        }
+
+        return false;
+      } catch (fetchError) {
+        console.warn('Supabase connection failed, using fallback:', fetchError);
+        
+        // Fallback authentication
+        if (password.length >= 6) {
+          const mockUser: User = {
+            id: `user-${Date.now()}`,
+            email,
+            name: email.split('@')[0],
+            role: email.includes('driver') ? 'driver' : 'customer'
+          };
+          setUser(mockUser);
+          localStorage.setItem('neoride_user', JSON.stringify(mockUser));
+          return true;
+        }
+        return false;
+      }
     } catch (error) {
       console.error('Login error:', error);
       return false;
@@ -202,23 +256,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signup = async (email: string, password: string, name: string, role: UserRole): Promise<boolean> => {
     try {
       setLoading(true);
-
-      // Try Supabase signup
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name,
-            role
-          }
-        }
-      });
-
-      if (error) {
-        console.error('Supabase signup error:', error);
-        
-        // Fallback to development mode
+      
+      // Check if Supabase is properly configured
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      // Use fallback authentication if Supabase not configured
+      if (!supabaseUrl || !supabaseKey || supabaseUrl.includes('placeholder')) {
+        console.warn('Using fallback authentication for signup');
         if (password.length >= 6) {
           const newUser: User = {
             id: `user-${Date.now()}`,
@@ -233,19 +278,67 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return false;
       }
 
-      if (data.user) {
-        // Create user profile
-        await createUserProfile(data.user.id, email, name, role);
-        
-        // If email confirmation is disabled, user will be logged in immediately
-        if (data.session) {
-          await fetchUserProfile(data.user);
-        }
-        
-        return true;
-      }
+      // Try Supabase signup
+      try {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              name,
+              role
+            }
+          }
+        });
 
-      return false;
+        if (error) {
+          console.error('Supabase signup error:', error);
+          
+          // Fallback to development mode
+          if (password.length >= 6) {
+            const newUser: User = {
+              id: `user-${Date.now()}`,
+              email,
+              name,
+              role
+            };
+            setUser(newUser);
+            localStorage.setItem('neoride_user', JSON.stringify(newUser));
+            return true;
+          }
+          return false;
+        }
+
+        if (data.user) {
+          // Create user profile
+          await createUserProfile(data.user.id, email, name, role);
+          
+          // If email confirmation is disabled, user will be logged in immediately
+          if (data.session) {
+            await fetchUserProfile(data.user);
+          }
+          
+          return true;
+        }
+
+        return false;
+      } catch (fetchError) {
+        console.warn('Supabase connection failed, using fallback:', fetchError);
+        
+        // Fallback authentication
+        if (password.length >= 6) {
+          const newUser: User = {
+            id: `user-${Date.now()}`,
+            email,
+            name,
+            role
+          };
+          setUser(newUser);
+          localStorage.setItem('neoride_user', JSON.stringify(newUser));
+          return true;
+        }
+        return false;
+      }
     } catch (error) {
       console.error('Signup error:', error);
       return false;

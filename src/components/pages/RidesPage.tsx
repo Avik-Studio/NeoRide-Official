@@ -31,16 +31,16 @@ const RidesPage: React.FC = () => {
       </motion.section>
 
       {/* Ride Booking */}
-      <motion.section
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.8 }}
-        className="max-w-4xl mx-auto px-4 pb-16"
-      >
-        <div className="bg-white/20 dark:bg-gray-900/20 backdrop-blur-lg rounded-2xl p-8 border border-white/30 dark:border-gray-700/30">
+      <div className="max-w-4xl mx-auto px-4 pb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.8 }}
+          className="bg-white/20 dark:bg-gray-900/20 backdrop-blur-lg rounded-2xl p-8 border border-white/30 dark:border-gray-700/30"
+        >
           <RideBooking onBookRide={handleBookRide} />
-        </div>
-      </motion.section>
+        </motion.div>
+      </div>
     </div>
   );
 };

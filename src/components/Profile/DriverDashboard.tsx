@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { Car, DollarSign, Star, Users, Calendar, MapPin, Clock } from 'lucide-react';
 
 const DriverDashboard: React.FC = () => {
@@ -119,17 +120,25 @@ const DriverDashboard: React.FC = () => {
         className="grid md:grid-cols-3 gap-6"
       >
         {[
-          { icon: Car, title: 'Go Online', desc: 'Start accepting rides', color: 'bg-green-500' },
-          { icon: Clock, title: 'View Schedule', desc: 'Manage your availability', color: 'bg-blue-500' },
-          { icon: DollarSign, title: 'Earnings Report', desc: 'View detailed earnings', color: 'bg-purple-500' }
+          { icon: Car, title: 'Go Online', desc: 'Start accepting rides', color: 'bg-green-500', action: 'online' },
+          { icon: Clock, title: 'View Schedule', desc: 'Manage your availability', color: 'bg-blue-500', action: 'schedule' },
+          { icon: DollarSign, title: 'Earnings Report', desc: 'View detailed earnings', color: 'bg-purple-500', action: 'earnings' }
         ].map((action, index) => (
           <motion.div
             key={index}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              if (action.action === 'online') {
+                alert('Driver Status: ONLINE\n\nYou are now accepting ride requests.\nEstimated rides in your area: 3-5\nAverage wait time: 2-4 minutes');
+              } else if (action.action === 'schedule') {
+                alert('Weekly Schedule:\n\nMonday: 9 AM - 6 PM\nTuesday: 9 AM - 6 PM\nWednesday: OFF\nThursday: 9 AM - 6 PM\nFriday: 9 AM - 8 PM\nSaturday: 10 AM - 4 PM\nSunday: OFF\n\nTotal Hours: 42 hours/week');
+              } else if (action.action === 'earnings') {
+                alert('Earnings Report:\n\nThis Week: ₹8,450\nThis Month: ₹32,180\nTotal Rides: 247\nAverage per Ride: ₹130\n\nTop Earning Days:\nFriday: ₹1,240\nSaturday: ₹980\nMonday: ₹890');
+              }
+            }}
             className="bg-white/20 dark:bg-gray-900/20 backdrop-blur-lg rounded-2xl p-6 border border-white/30 dark:border-gray-700/30 cursor-pointer"
           >
-            <action.icon className="h-8 w-8 text-white mb-4" />
             <div className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mb-4`}>
               <action.icon className="h-6 w-6 text-white" />
             </div>

@@ -64,8 +64,8 @@ const LandingPage: React.FC = () => {
               Kolkata's #1 Ride & Travel App
             </p>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Get instant rides across Kolkata or explore West Bengal's beauty with our travel packages. 
-              Safe, reliable, and affordable - your trusted travel companion in the City of Joy.
+              Get instant rides across Kolkata in minutes or explore West Bengal's beauty with our curated travel packages. 
+              Safe, reliable, and affordable - your trusted companion in the City of Joy.
             </p>
           </motion.div>
 
@@ -73,24 +73,24 @@ const LandingPage: React.FC = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.8 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
+            className="flex flex-col sm:flex-row gap-6 justify-center mb-12"
           >
-            <Link to="/login">
+            <Link to="/rides">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                className="px-10 py-5 bg-gradient-to-r from-yellow-500 to-orange-600 text-black rounded-2xl font-bold text-xl shadow-2xl hover:shadow-3xl transition-all duration-300 min-w-[200px]"
               >
-                Get Started
+                🚗 Quick Ride
               </motion.button>
             </Link>
-            <Link to="/signup">
+            <Link to="/packages">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 border-2 border-blue-500 text-blue-500 dark:text-blue-400 rounded-xl font-semibold text-lg hover:bg-blue-500 hover:text-white transition-all duration-300"
+                className="px-10 py-5 border-2 border-blue-500 text-blue-500 dark:text-blue-400 rounded-2xl font-bold text-xl hover:bg-blue-500 hover:text-white transition-all duration-300 min-w-[200px]"
               >
-                Sign Up
+                ✈️ Travel Packages
               </motion.button>
             </Link>
           </motion.div>

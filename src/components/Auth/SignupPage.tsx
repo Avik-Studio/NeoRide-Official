@@ -323,7 +323,7 @@ const SignupPage: React.FC = () => {
             <p className="text-gray-600 dark:text-gray-400">
               Already have an account?{' '}
               <Link
-                to="/"
+                to="/login"
                 className="text-blue-500 hover:text-blue-600 font-medium"
               >
                 Sign in

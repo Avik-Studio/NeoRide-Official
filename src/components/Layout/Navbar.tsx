@@ -51,7 +51,7 @@ const Navbar: React.FC = () => {
               <motion.div key={item.name} whileHover={{ scale: 1.1 }}>
                 <Link
                   to={item.path}
-                  className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                  className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 font-medium"
                 >
                   {item.name}
                 </Link>

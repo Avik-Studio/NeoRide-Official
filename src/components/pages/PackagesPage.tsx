@@ -164,6 +164,9 @@ const PackagesPage: React.FC = () => {
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
+                    onClick={() => {
+                      alert(`Package Details:\n\n${pkg.title}\nDestination: ${pkg.destination}\nDuration: ${pkg.duration}\nPrice: ₹${pkg.price}\nRating: ${pkg.rating}★ (${pkg.reviews} reviews)\n\nFeatures:\n${pkg.features.join('\n')}`);
+                    }}
                     className="px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                   >
                     Details

@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { Calendar, MapPin, CreditCard, Star, Clock, Plane } from 'lucide-react';
 
 const CustomerDashboard: React.FC = () => {
@@ -122,24 +123,49 @@ const CustomerDashboard: React.FC = () => {
         className="grid md:grid-cols-3 gap-6"
       >
         {[
-          { icon: Calendar, title: 'Book New Trip', desc: 'Explore new destinations' },
-          { icon: CreditCard, title: 'Payment History', desc: 'View transaction history' },
-          { icon: Star, title: 'Reviews & Ratings', desc: 'Share your experiences' }
+          { icon: Calendar, title: 'Book New Trip', desc: 'Explore new destinations', path: '/packages' },
+          { icon: CreditCard, title: 'Payment History', desc: 'View transaction history', action: 'payment' },
+          { icon: Star, title: 'Reviews & Ratings', desc: 'Share your experiences', action: 'reviews' }
         ].map((action, index) => (
-          <motion.div
-            key={index}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-white/20 dark:bg-gray-900/20 backdrop-blur-lg rounded-2xl p-6 border border-white/30 dark:border-gray-700/30 cursor-pointer"
-          >
-            <action.icon className="h-8 w-8 text-blue-500 mb-4" />
-            <h3 className="font-semibold text-gray-800 dark:text-white mb-2">
-              {action.title}
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 text-sm">
-              {action.desc}
-            </p>
-          </motion.div>
+          action.path ? (
+            <Link key={index} to={action.path}>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-white/20 dark:bg-gray-900/20 backdrop-blur-lg rounded-2xl p-6 border border-white/30 dark:border-gray-700/30 cursor-pointer"
+              >
+                <action.icon className="h-8 w-8 text-blue-500 mb-4" />
+                <h3 className="font-semibold text-gray-800 dark:text-white mb-2">
+                  {action.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm">
+                  {action.desc}
+                </p>
+              </motion.div>
+            </Link>
+          ) : (
+            <motion.div
+              key={index}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                if (action.action === 'payment') {
+                  alert('Payment History:\n\nDarjeeling Hills - ₹15,999 (Paid)\nSundarbans - ₹12,999 (Pending)\nKolkata Heritage - ₹8,999 (Paid)\n\nTotal Spent: ₹36,997');
+                } else if (action.action === 'reviews') {
+                  alert('Your Reviews:\n\nDarjeeling Hills - 5★\n"Amazing experience! The tea gardens were beautiful."\n\nKolkata Heritage - 4★\n"Great cultural tour, learned a lot about the city."\n\nAverage Rating: 4.5★');
+                }
+              }}
+              className="bg-white/20 dark:bg-gray-900/20 backdrop-blur-lg rounded-2xl p-6 border border-white/30 dark:border-gray-700/30 cursor-pointer"
+            >
+              <action.icon className="h-8 w-8 text-blue-500 mb-4" />
+              <h3 className="font-semibold text-gray-800 dark:text-white mb-2">
+                {action.title}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 text-sm">
+                {action.desc}
+              </p>
+            </motion.div>
+          )
         ))}
       </motion.div>
     </div>

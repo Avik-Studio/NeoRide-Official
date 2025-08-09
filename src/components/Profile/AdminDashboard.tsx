@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { Users, Car, Package, DollarSign, TrendingUp, MapPin, Calendar, Settings } from 'lucide-react';
 
 const AdminDashboard: React.FC = () => {
@@ -105,14 +106,23 @@ const AdminDashboard: React.FC = () => {
         className="grid md:grid-cols-3 gap-6"
       >
         {[
-          { icon: Users, title: 'Manage Users', desc: 'View and manage all users', color: 'bg-blue-500' },
-          { icon: TrendingUp, title: 'Analytics', desc: 'View detailed reports', color: 'bg-green-500' },
-          { icon: Settings, title: 'System Settings', desc: 'Configure application', color: 'bg-purple-500' }
+          { icon: Users, title: 'Manage Users', desc: 'View and manage all users', color: 'bg-blue-500', action: 'users' },
+          { icon: TrendingUp, title: 'Analytics', desc: 'View detailed reports', color: 'bg-green-500', action: 'analytics' },
+          { icon: Settings, title: 'System Settings', desc: 'Configure application', color: 'bg-purple-500', action: 'settings' }
         ].map((action, index) => (
           <motion.div
             key={index}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              if (action.action === 'users') {
+                alert('User Management:\n\nTotal Users: 2,847\nActive Users: 2,156\nNew This Month: 234\n\nUser Types:\n- Customers: 2,691 (94.5%)\n- Drivers: 156 (5.5%)\n\nTop Actions:\n- View user profiles\n- Suspend accounts\n- Send notifications');
+              } else if (action.action === 'analytics') {
+                alert('Analytics Dashboard:\n\nRevenue: ₹18,45,780 (+15%)\nBookings: 1,247 (+23%)\nActive Drivers: 156 (+8%)\nCustomer Satisfaction: 4.8★\n\nTop Routes:\n1. Park Street → Airport\n2. Howrah → Salt Lake\n3. Esplanade → New Town');
+              } else if (action.action === 'settings') {
+                alert('System Settings:\n\n✓ Payment Gateway: Active\n✓ SMS Notifications: Enabled\n✓ Email Service: Running\n✓ Map Services: Connected\n\nConfiguration Options:\n- Fare rates\n- Service areas\n- Driver requirements\n- App features');
+              }
+            }}
             className="bg-white/20 dark:bg-gray-900/20 backdrop-blur-lg rounded-2xl p-6 border border-white/30 dark:border-gray-700/30 cursor-pointer"
           >
             <div className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center mb-4`}>

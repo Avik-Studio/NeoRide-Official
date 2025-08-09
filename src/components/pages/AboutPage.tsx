@@ -352,13 +352,15 @@ const AboutPage: React.FC = () => {
               <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                 {member.bio}
               </p>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors"
-              >
-                Connect
-              </motion.button>
+              <a href={`mailto:${member.name.toLowerCase().replace(' ', '.')}@neoride.com`}>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600 transition-colors"
+                >
+                  Connect
+                </motion.button>
+              </a>
             </motion.div>
           ))}
         </div>
